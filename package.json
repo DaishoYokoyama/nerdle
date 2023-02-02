@@ -1,0 +1,29 @@
+{
+  "name": "nerdle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:DaishoYokoyama/nerdle.git",
+  "author": "Daisho Yokoyama <daisyou117@gmail.com>",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "dev:front": "yarn workspace frontend dev",
+    "build:front": "yarn workspace frontend build",
+    "lint:front": "yarn workspace frontend lint",
+    "serve:function": "yarn workspace functions serve"
+  },
+  "packageManager": "yarn@3.4.0",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "^2.8.3",
+    "typescript": "^4.9.5"
+  }
+}

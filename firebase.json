@@ -1,0 +1,28 @@
+{
+  "functions": [
+    {
+      "source": "packages/functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": [
+        "yarn --prefix \"$RESOURCE_DIR\" yarn lint",
+        "yarn --prefix \"$RESOURCE_DIR\" yarn build"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
