@@ -5,7 +5,12 @@
     "module": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "esModuleInterop": false,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "jsxImportSource": "@emotion/react"
   },
   "include": ["src", ".eslintrc.js"],
   "references": [{ "path": "./tsconfig.node.json" }]

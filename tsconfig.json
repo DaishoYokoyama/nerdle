@@ -8,7 +8,12 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["packages/*"]
+    },
     "noEmit": true
   },
-  "compileOnSave": true
+  "compileOnSave": true,
+  "include": ["./packages/core/**/*", "packages/types/index.ts"]
 }

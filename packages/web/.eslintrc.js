@@ -4,4 +4,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   ignorePatterns: ["dist", "vite.config.ts"],
+  rules: {
+    "react/no-unknown-property": ["error", { ignore: ["css"] }],
+  },
 };

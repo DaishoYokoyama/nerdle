@@ -16,7 +16,7 @@
     }
   ],
   "hosting": {
-    "public": "public",
+    "public": "packages/web/dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
