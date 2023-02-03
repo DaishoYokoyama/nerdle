@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 
-import type { GameConfig } from "@/types";
+import type { GameConfig } from "@/../../core/types";
 
 /**
  * ゲームの設定情報を取得する
@@ -12,8 +12,8 @@ import type { GameConfig } from "@/types";
  */
 export const getGameConfig = (): Promise<GameConfig> => {
   return Promise.resolve<GameConfig>({
+    correctValue: ["2", "+", "3", "*", "5", "=", "1", "7"],
     attemptLimits: 6,
-    cellCount: 8,
     keys: [
       { id: nanoid(), value: "1", type: "number" },
       { id: nanoid(), value: "2", type: "number" },

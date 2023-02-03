@@ -1,14 +1,12 @@
 import { css } from "@emotion/react";
 import { Flex } from "@mantine/core";
-import { useCallback } from "react";
+import { useMemo } from "react";
 
 import { useNerdleGame } from "./Nerdle.hook";
 
-import type { Cell } from "@/types";
-
-import { Header, Keyboard, AnswerForm } from "@/components/elements";
+import { Header, Keyboard } from "@/components/elements";
+import { Button } from "@/components/elements/Button";
 import { GameLayout } from "@/components/layouts";
-import { cellTypes } from "@/types";
 
 const contentStyle = css`
   max-width: 500px;
@@ -18,42 +16,39 @@ const contentStyle = css`
 `;
 
 export const Nerdle = () => {
-  const { selectedCellId, currentAttempt, answers, keys, actions } =
+  const { selectedBox, currentAttempt, keys, boxes, columnSize, actions } =
     useNerdleGame();
 
-  const onKeyClick = useCallback((cell: Cell) => {
-    switch (cell.type) {
-      case cellTypes.Delete: {
-        return;
-      }
-      case cellTypes.Enter: {
-        return;
-      }
-      default: {
-        actions.update(cell);
-      }
-    }
-  }, []);
+  const boxWrapperStyle = useMemo(
+    () => css`
+      display: grid;
+      grid-template-columns: repeat(${columnSize}, 1fr);
+      gap: 4px;
+    `,
+    [columnSize]
+  );
 
   return (
     <GameLayout header={<Header />}>
       <Flex css={contentStyle} gap={20} direction="column">
-        <Flex direction="column" gap={10}>
-          {answers.map((answer) => (
-            <AnswerForm
-              key={answer.attempt}
-              answer={answer}
-              currentAttempt={currentAttempt}
-              selectedCellId={selectedCellId}
-              onCellClick={actions.select}
-            />
+        <div css={boxWrapperStyle}>
+          {boxes.map((box) => (
+            <Button
+              key={box.id}
+              color={box.color}
+              selected={box.id === selectedBox?.id}
+              onClick={() => actions.selectBox(box)}
+              readonly={box.group !== String(currentAttempt)}
+            >
+              {box.value}
+            </Button>
           ))}
-        </Flex>
-
+        </div>
         <Keyboard
-          numberCells={keys.number}
-          operatorCells={keys.operator}
-          onClick={onKeyClick}
+          numberKeys={keys.number}
+          operatorKeys={keys.operator}
+          onClick={(e) => actions.setBoxValue(e.value)}
+          onDeleteClick={actions.backspace}
         />
       </Flex>
     </GameLayout>

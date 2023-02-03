@@ -1,93 +1,160 @@
-import { cloneDeep } from "lodash";
+import { isNumberKey, isOperatorKey } from "@/../../core/utils";
+import { nanoid } from "nanoid";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
-import type { Cell, Answer, GameConfig } from "@/types";
+import type { GameConfig, Box } from "@/../../core/types";
 
 import { getGameConfig } from "@/api/rest";
-import { isNumberCell, isOperatorCell } from "@/types";
-import { generateAnswerCells } from "@/utils";
 
 type NerdleGameState = {
-  selectedCellId?: string;
+  selectedBoxId?: string;
   gameConfig?: GameConfig;
 
   currentAttempt: number;
-  answers: Answer[];
+  boxes: Box[];
 };
 
 export const useNerdleGame = () => {
   const [state, setState] = useState<NerdleGameState>({
     currentAttempt: 1,
-    answers: [],
+    boxes: [],
   });
 
-  /**
-   * Number keys from game config
-   */
   const numberKeys = useMemo(
-    () => state.gameConfig?.keys.filter(isNumberCell) || [],
+    () => state.gameConfig?.keys.filter(isNumberKey) || [],
     [state.gameConfig]
   );
 
-  /**
-   * Operator keys from game config
-   */
   const operatorKeys = useMemo(
-    () => state.gameConfig?.keys.filter(isOperatorCell) || [],
+    () => state.gameConfig?.keys.filter(isOperatorKey) || [],
     [state.gameConfig]
   );
 
-  const select = (cell: Cell) =>
-    setState((prev) => ({ ...prev, selectedCellId: cell.id }));
+  const columnSize = useMemo(
+    () => state.gameConfig?.correctValue.length || 0,
+    [state.gameConfig]
+  );
 
-  const update = (key: Cell) =>
-    setState((prev) => {
-      if (prev.selectedCellId === undefined) return prev;
+  const selectedBox = useMemo(
+    () =>
+      state.selectedBoxId
+        ? state.boxes.find((box) => box.id === state.selectedBoxId)
+        : undefined,
+    [state.selectedBoxId, state.boxes]
+  );
 
-      const answers = cloneDeep(state.answers);
-      const answer = answers.find((answer) =>
-        answer.cells.some((cell) => cell.id === state.selectedCellId)
-      );
-      if (!answer) return prev;
+  const selectBox = useCallback(
+    (box: Box) => setState((prev) => ({ ...prev, selectedBoxId: box.id })),
+    [setState]
+  );
 
-      const cell = answer.cells.find(
-        (cell) => cell.id === state.selectedCellId
-      );
-      if (!cell) return prev;
-      cell.value = key.value;
+  const selectToNextBox = useCallback(() => {
+    if (!selectedBox) return;
 
-      console.info(cell.id, prev.selectedCellId);
+    const currentIndex = state.boxes.findIndex(
+      (box) => box.id === selectedBox.id
+    );
+    const nextBox = state.boxes[currentIndex + 1];
 
-      return {
+    if (nextBox && selectedBox.group === nextBox.group) {
+      selectBox(nextBox);
+    }
+  }, [selectedBox, state.boxes, selectBox]);
+
+  const selectToPrevBox = useCallback(() => {
+    if (!selectedBox) return;
+
+    const currentIndex = state.boxes.findIndex(
+      (box) => box.id === selectedBox.id
+    );
+
+    const prevBox = state.boxes[currentIndex - 1];
+
+    if (prevBox && selectedBox.group === prevBox.group) {
+      selectBox(prevBox);
+    }
+  }, [selectedBox, state.boxes, selectBox]);
+
+  const setBoxValue = useCallback(
+    (value: string) => {
+      if (!selectedBox) return;
+
+      setState((prev) => ({
         ...prev,
-        answers,
-      };
-    });
+        boxes: prev.boxes.map((box) =>
+          box.id === selectedBox.id ? { ...box, value } : box
+        ),
+      }));
+      selectToNextBox();
+    },
+    [setState, selectedBox, selectToNextBox]
+  );
 
-  /**
-   * Load game config from API
-   */
+  const backspace = useCallback(() => {
+    if (!selectedBox) return;
+
+    // NOTE: 箱の値が入力済みの場合は値を削除して終了
+    if (selectedBox.value) {
+      setState((prev) => ({
+        ...prev,
+        boxes: prev.boxes.map((box) =>
+          box.id === selectedBox.id ? { ...box, value: undefined } : box
+        ),
+      }));
+      return;
+    }
+
+    const currentIndex = state.boxes.findIndex(
+      (box) => box.id === selectedBox.id
+    );
+    const prevBox = state.boxes[currentIndex - 1];
+
+    // NOTE: 前の箱が別のグループ(行が違う場合、処理中断)
+    if (selectedBox.group !== prevBox?.group) return;
+
+    setState((prev) => ({
+      ...prev,
+      boxes: prev.boxes.map((box) =>
+        box.id === prevBox.id ? { ...box, value: undefined } : box
+      ),
+    }));
+
+    selectToPrevBox();
+  }, [selectedBox, setState, selectToPrevBox]);
+
   const loadGameConfig = useCallback(async () => {
     const gameConfig = await getGameConfig();
-    const answers = generateAnswerCells(gameConfig);
-    const selectedCellId = answers[0].cells[0].id;
+
+    // MEMO: ゲームの設定情報から画面に表示する箱を生成
+    const boxes = Array.from({ length: gameConfig.attemptLimits }).flatMap(
+      (_, i) => {
+        const row = String(i + 1);
+        return Array.from({ length: gameConfig.correctValue.length }).map<Box>(
+          () => ({
+            id: nanoid(),
+            group: row,
+          })
+        );
+      }
+    );
 
     setState({
+      selectedBoxId: boxes[0].id,
       currentAttempt: 1,
-      selectedCellId,
       gameConfig,
-      answers,
+      boxes,
     });
-  }, []);
+  }, [setState]);
 
   useEffect(() => {
     loadGameConfig();
   }, []);
 
   return {
-    selectedCellId: state.selectedCellId,
-    currentAttempt: state.currentAttempt,
-    answers: state.answers,
+    ...state,
+
+    columnSize,
+    selectedBox,
 
     keys: {
       number: numberKeys,
@@ -95,8 +162,11 @@ export const useNerdleGame = () => {
     },
 
     actions: {
-      select,
-      update,
+      selectBox,
+      selectToNextBox,
+      selectToPrevBox,
+      setBoxValue,
+      backspace,
     },
   };
 };

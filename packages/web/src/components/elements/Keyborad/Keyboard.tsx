@@ -1,9 +1,10 @@
 import { css } from "@emotion/react";
 import { Flex } from "@mantine/core";
 
-import { CellButton } from "../CellButton";
+import { Button } from "../Button";
 
-import type { DefaultProps, Cell, NumberCell, OperatorCell } from "@/types";
+import type { NumberKey, OperatorKey, Key } from "@/../../core/types";
+import type { DefaultProps } from "@/types";
 
 const buttonRowStyle = css`
   height: 48px;
@@ -18,40 +19,52 @@ const buttonStyle = css`
 `;
 
 export interface KeypadProps extends DefaultProps {
-  numberCells: NumberCell[];
-  operatorCells: OperatorCell[];
-  onClick?: (cell: Cell) => void;
+  numberKeys: NumberKey[];
+  operatorKeys: OperatorKey[];
+  onClick?: (cell: Key) => void;
+  onDeleteClick?: () => void;
+  onEnterClick?: () => void;
 }
 
 export const Keyboard = ({
   className,
-  numberCells,
-  operatorCells,
+  numberKeys,
+  operatorKeys,
   onClick,
+  onDeleteClick,
+  onEnterClick,
 }: KeypadProps) => {
   return (
     <Flex className={className} direction="column" gap={8}>
       <div className="number-row" css={buttonRowStyle}>
-        {numberCells.map((cell) => (
-          <CellButton
-            key={cell.id}
-            cell={cell}
+        {numberKeys.map((key) => (
+          <Button
+            key={key.id}
+            color={key.color}
             css={buttonStyle}
-            onClick={onClick}
-          />
+            onClick={() => onClick?.(key)}
+          >
+            {key.value}
+          </Button>
         ))}
       </div>
       <div className="operator-action-row" css={buttonRowStyle}>
-        {operatorCells.map((cell) => (
-          <CellButton
-            key={cell.id}
-            cell={cell}
+        {operatorKeys.map((key) => (
+          <Button
+            key={key.id}
+            color={key.color}
             css={buttonStyle}
-            onClick={onClick}
-          />
+            onClick={() => onClick?.(key)}
+          >
+            {key.value}
+          </Button>
         ))}
-        <CellButton cell={{ id: "delete", type: "delete", value: "Delete" }} />
-        <CellButton cell={{ id: "enter", type: "enter", value: "Enter" }} />
+        <Button css={buttonStyle} onClick={onDeleteClick}>
+          Delete
+        </Button>
+        <Button css={buttonStyle} onClick={onEnterClick}>
+          Enter
+        </Button>
       </div>
     </Flex>
   );
