@@ -1,4 +1,4 @@
-import type { BaseObject } from "./BaseObject";
+import type { BaseObject } from "./baseObject";
 
 export type Box = BaseObject & {
   value?: string;

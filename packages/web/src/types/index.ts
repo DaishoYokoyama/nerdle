@@ -1,1 +1,1 @@
-export * from "./DefaultProps";
+export * from "./defaultProps";
