@@ -1,7 +1,7 @@
-import { initializeApp } from "firebase-admin";
+import { initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
-import type { BaseObject } from "@/../../../core/types";
+import type { BaseObject } from "@/app/types";
 import type { Firestore, WriteResult } from "firebase-admin/firestore";
 
 initializeApp();
