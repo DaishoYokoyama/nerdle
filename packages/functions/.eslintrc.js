@@ -4,6 +4,6 @@ module.exports = {
     project: ["tsconfig.json", "tsconfig.dev.json"],
     tsconfigRootDir: __dirname,
   },
-  ignorePatterns: ["/lib/**/*"],
+  ignorePatterns: ["/lib/**/*", "jest.config.js"],
   env: { es6: true, node: true },
 };
