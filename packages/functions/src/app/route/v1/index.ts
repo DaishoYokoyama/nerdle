@@ -1,11 +1,11 @@
 import { Router } from "express";
 
 import { evaluateRouter } from "./evaluate";
-import { gamePlayRouter } from "./gamePlay";
-import { gameRuleRouter } from "./gameRule";
+import { gamePlayRouter } from "./play";
+import { ruleRouter } from "./rule";
 
 export const router = Router();
 
 router.use("/evaluate", evaluateRouter);
-router.use("/gameRule", gameRuleRouter);
-router.use("/gamePlay", gamePlayRouter);
+router.use("/rule", ruleRouter);
+router.use("/play", gamePlayRouter);

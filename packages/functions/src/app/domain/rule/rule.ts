@@ -4,14 +4,14 @@ import type { KeyWithOutId, Key } from "./key";
  * 共通オブジェクト
  ***********************/
 
-export type GameRuleSummary = {
+export type RuleSummary = {
   id: string;
   correctValueLength: number;
   attemptLimits: number;
   keys: Key[];
 };
 
-export type GameRule = {
+export type Rule = {
   id: string;
   correctValue: string[];
   attemptLimits: number;
@@ -22,14 +22,14 @@ export type GameRule = {
  * REST入出力
  ***********************/
 
-export type FindGameRuleResponse = GameRuleSummary;
+export type FindRuleResponse = RuleSummary;
 
-export type FindAllGameRuleResponse = GameRuleSummary[];
+export type FindAllRuleResponse = RuleSummary[];
 
-export type CreateGameRuleRequest = {
+export type CreateRuleRequest = {
   correctValue: string[];
   attemptLimits: number;
   keys: KeyWithOutId[];
 };
 
-export type CreateGameRuleResponse = GameRule;
+export type CreateRuleResponse = Rule;

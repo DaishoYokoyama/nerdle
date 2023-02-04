@@ -1,24 +1,24 @@
 import { Router } from "express";
 import { v4 as uuid } from "uuid";
 
-import { gameRuleDb } from "../../db/gameRule";
+import { gameRuleDb } from "../../db/rule";
 import * as domain from "../../domain";
 
 import type * as dto from "../../dto";
 import type { Request, Response } from "express";
 
-export const gameRuleRouter = Router();
+export const ruleRouter = Router();
 
 /**
- * GET /api/v1/gameRule
- * @returns {FindAllGameRuleResponse}
+ * GET /api/v1/rule
+ * @returns {domain.FindAllRuleResponse}
  * @throws {Error}
  */
-gameRuleRouter.get("/", async (req: Request, res: Response) => {
+ruleRouter.get("/", async (req: Request, res: Response) => {
   const gameRules = await gameRuleDb.getAll();
 
-  const responseBody: domain.FindAllGameRuleResponse =
-    gameRules.map<domain.GameRuleSummary>((gameRule) => ({
+  const responseBody: domain.FindAllRuleResponse =
+    gameRules.map<domain.RuleSummary>((gameRule) => ({
       id: gameRule.id,
       correctValueLength: gameRule.correctValue.length,
       attemptLimits: gameRule.attemptLimits,
@@ -29,17 +29,17 @@ gameRuleRouter.get("/", async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/v1/gameRule/:id
- * @returns {FindGameRuleResponse}
+ * GET /api/v1/rule/:id
+ * @returns {domain.FindRuleResponse}
  * @throws {Error}
  */
-gameRuleRouter.get(
+ruleRouter.get(
   "/:id",
   domain.validateFindGameRuleRequest,
   async (req: Request, res: Response) => {
     const gameRule = await gameRuleDb.get(req.params.id);
 
-    const responseBody: domain.FindGameRuleResponse = {
+    const responseBody: domain.FindRuleResponse = {
       id: gameRule.id,
       correctValueLength: gameRule.correctValue.length,
       attemptLimits: gameRule.attemptLimits,
@@ -51,18 +51,18 @@ gameRuleRouter.get(
 );
 
 /**
- * POST /api/v1/gameRule
- * @param {CreateGameRuleRequest} req.body
- * @returns {CreateGameRuleResponse}
+ * POST /api/v1/rule
+ * @param {domain.CreateRuleRequest} req.body
+ * @returns {domain.CreateRuleResponse}
  * @throws {Error}
  */
-gameRuleRouter.post(
+ruleRouter.post(
   "/",
   domain.validateCreateGameRuleRequest,
   async (req: Request, res: Response) => {
-    const requestBody: domain.CreateGameRuleRequest = req.body;
+    const requestBody: domain.CreateRuleRequest = req.body;
 
-    const gameRule: dto.GameRule = {
+    const gameRule: dto.Rule = {
       id: uuid(),
       correctValue: requestBody.correctValue,
       attemptLimits: requestBody.attemptLimits,
@@ -75,7 +75,7 @@ gameRuleRouter.post(
 
     await gameRuleDb.set(gameRule);
 
-    const responseBody: domain.CreateGameRuleResponse = {
+    const responseBody: domain.CreateRuleResponse = {
       id: gameRule.id,
       attemptLimits: gameRule.attemptLimits,
       correctValue: gameRule.correctValue,

@@ -1,2 +1,2 @@
 export * from "./baseObject";
-export * from "./gameRule";
+export * from "./rule";
