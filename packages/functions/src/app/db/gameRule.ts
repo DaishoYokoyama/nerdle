@@ -1,6 +1,6 @@
 import { Database } from "./firestore";
 
-import type { GameRule } from "@/app/dto/gameRule";
+import type { GameRule } from "../dto/gameRule/gameRule";
 
 class GameRuleDatabase extends Database<GameRule> {}
 

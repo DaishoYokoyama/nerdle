@@ -1,12 +1,11 @@
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import admin from "firebase-admin";
 
-import type { BaseObject } from "@/app/types";
+import type { BaseObject } from "../dto";
 import type { Firestore, WriteResult } from "firebase-admin/firestore";
 
-initializeApp();
+admin.initializeApp();
 
-const db = getFirestore();
+const db = admin.firestore();
 
 export class Database<T extends BaseObject> {
   private _db: Firestore;
@@ -27,12 +26,9 @@ export class Database<T extends BaseObject> {
     return snapshot.docs.map((doc) => doc.data() as T);
   }
 
-  async set(datas: T[]): Promise<WriteResult[]> {
-    const batch = this._db.batch();
-    datas.forEach((data) => {
-      batch.set(this._db.collection(this._collection).doc(data.id), data);
-    });
-    return batch.commit();
+  async set(data: T): Promise<WriteResult> {
+    const result = this._db.collection(this._collection).doc(data.id).set(data);
+    return result;
   }
 
   async delete(id: string): Promise<WriteResult> {

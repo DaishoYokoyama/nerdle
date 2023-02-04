@@ -1,4 +1,4 @@
-import type { BaseObject } from "./baseObject";
+import type { BaseObject } from "../baseObject";
 
 export type Key = BaseObject & {
   value: string;
