@@ -66,3 +66,11 @@ export const validateCreateGameRuleRequest = checkSchema({
     },
   },
 });
+
+export const validateFindGameRuleRequest = checkSchema({
+  id: {
+    in: ["params"],
+    isString: true,
+    isUUID: true,
+  },
+});

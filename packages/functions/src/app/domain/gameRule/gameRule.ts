@@ -22,6 +22,8 @@ export type GameRule = {
  * REST入出力
  ***********************/
 
+export type FindGameRuleResponse = GameRuleSummary;
+
 export type FindAllGameRuleResponse = GameRuleSummary[];
 
 export type CreateGameRuleRequest = {
