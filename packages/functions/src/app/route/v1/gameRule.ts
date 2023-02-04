@@ -51,27 +51,6 @@ gameRuleRouter.get(
 );
 
 /**
- * GET /api/v1/gameRule/current
- * @returns {FindGameRuleResponse}
- * @throws {Error}
- */
-gameRuleRouter.get("/current", async (req: Request, res: Response) => {
-  const gameRules = await gameRuleDb.getAll();
-
-  // FIXME: 一旦最初のルールを返すが、将来的には現在のルールを返すようにする
-  const gameRule = gameRules[0];
-
-  const responseBody: domain.FindGameRuleResponse = {
-    id: gameRule.id,
-    correctValueLength: gameRule.correctValue.length,
-    attemptLimits: gameRule.attemptLimits,
-    keys: gameRule.keys,
-  };
-
-  res.send(responseBody);
-});
-
-/**
  * POST /api/v1/gameRule
  * @param {CreateGameRuleRequest} req.body
  * @returns {CreateGameRuleResponse}

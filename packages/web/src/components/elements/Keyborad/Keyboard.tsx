@@ -3,8 +3,7 @@ import { Flex } from "@mantine/core";
 
 import { Button } from "../Button";
 
-import type { NumberKey, OperatorKey, Key } from "@/../../core/types";
-import type { DefaultProps } from "@/types";
+import type { NumberKey, OperatorKey, Key, DefaultProps } from "@/types";
 
 const buttonRowStyle = css`
   height: 48px;

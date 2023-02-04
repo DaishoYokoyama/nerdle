@@ -2,6 +2,6 @@ import * as functions from "firebase-functions";
 
 import { app } from "./app";
 
-const api = functions.https.onRequest(app);
+const api = functions.region("asia-northeast1").https.onRequest(app);
 
 export { api };

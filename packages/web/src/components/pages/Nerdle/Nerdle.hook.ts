@@ -1,5 +1,5 @@
-import { nanoid } from "nanoid";
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { v4 as uuid } from "uuid";
 
 import type { GameRule, Box } from "@/types";
 
@@ -126,7 +126,7 @@ export const useNerdleGame = () => {
         const row = String(i + 1);
         return Array.from({ length: gameConfig.correctValueLength }).map<Box>(
           () => ({
-            id: nanoid(),
+            id: uuid(),
             group: row,
           })
         );
