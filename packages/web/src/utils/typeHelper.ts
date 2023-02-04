@@ -1,4 +1,4 @@
-import type { OperatorKey, Key, NumberKey } from "../types";
+import type { OperatorKey, Key, NumberKey } from "@/types";
 
 export const isNumberKey = (key: Key): key is NumberKey =>
   key.type === "number";

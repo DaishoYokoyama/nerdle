@@ -16,16 +16,16 @@ const contentStyle = css`
 `;
 
 export const Nerdle = () => {
-  const { selectedBox, currentAttempt, keys, boxes, columnSize, actions } =
+  const { selectedBox, currentAttempt, keys, boxes, gameConfig, actions } =
     useNerdleGame();
 
   const boxWrapperStyle = useMemo(
     () => css`
       display: grid;
-      grid-template-columns: repeat(${columnSize}, 1fr);
+      grid-template-columns: repeat(${gameConfig?.correctValueLength}, 1fr);
       gap: 4px;
     `,
-    [columnSize]
+    [gameConfig]
   );
 
   return (

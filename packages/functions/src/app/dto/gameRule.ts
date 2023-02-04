@@ -1,4 +1,4 @@
-import type { BaseObject, Key } from "@/../../core/types";
+import type { BaseObject, Key } from "@/app/types";
 
 export type GameRule = BaseObject & {
   correctValue: string[];

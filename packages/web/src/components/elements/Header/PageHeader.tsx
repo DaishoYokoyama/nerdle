@@ -10,7 +10,6 @@ import {
 import type { DefaultProps } from "@/types";
 
 import logoUrl from "@/assets/logo.png";
-import { GITHUB_REPOSITORY_URL } from "@/constants";
 
 const pageHeaderStyle = css`
   padding: 16px;
@@ -31,11 +30,12 @@ export const Header = ({ className }: HeaderProps) => {
       children: (
         <>
           <Text size="sm">以下のサイトにアクセスします。</Text>
-          <Text size="sm">{GITHUB_REPOSITORY_URL}</Text>
+          <Text size="sm">{"https://github.com/DaishoYokoyama/nerdle"}</Text>
         </>
       ),
       labels: { confirm: "遷移する", cancel: "キャンセル" },
-      onConfirm: () => window.open(GITHUB_REPOSITORY_URL, "_blank"),
+      onConfirm: () =>
+        window.open("https://github.com/DaishoYokoyama/nerdle", "_blank"),
     });
 
   return (

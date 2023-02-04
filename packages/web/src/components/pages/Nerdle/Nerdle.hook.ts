@@ -1,14 +1,14 @@
-import { isNumberKey, isOperatorKey } from "@/../../core/utils";
 import { nanoid } from "nanoid";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
-import type { GameConfig, Box } from "@/../../core/types";
+import type { GameRule, Box } from "@/types";
 
 import { getGameConfig } from "@/api/rest";
+import { isNumberKey, isOperatorKey } from "@/utils";
 
 type NerdleGameState = {
   selectedBoxId?: string;
-  gameConfig?: GameConfig;
+  gameConfig?: GameRule;
 
   currentAttempt: number;
   boxes: Box[];
@@ -27,11 +27,6 @@ export const useNerdleGame = () => {
 
   const operatorKeys = useMemo(
     () => state.gameConfig?.keys.filter(isOperatorKey) || [],
-    [state.gameConfig]
-  );
-
-  const columnSize = useMemo(
-    () => state.gameConfig?.correctValue.length || 0,
     [state.gameConfig]
   );
 
@@ -129,7 +124,7 @@ export const useNerdleGame = () => {
     const boxes = Array.from({ length: gameConfig.attemptLimits }).flatMap(
       (_, i) => {
         const row = String(i + 1);
-        return Array.from({ length: gameConfig.correctValue.length }).map<Box>(
+        return Array.from({ length: gameConfig.correctValueLength }).map<Box>(
           () => ({
             id: nanoid(),
             group: row,
@@ -153,7 +148,6 @@ export const useNerdleGame = () => {
   return {
     ...state,
 
-    columnSize,
     selectedBox,
 
     keys: {
