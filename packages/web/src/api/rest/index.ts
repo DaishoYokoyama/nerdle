@@ -1,14 +1,19 @@
 import { http } from "./client";
 
-import type { FindGameRuleResponse } from "./domain";
+import type {
+  CreateSessionRequest,
+  CreateRuleResponse,
+  ExecuteGuessRequest,
+  ExecuteGuessResponse,
+} from "./domain";
 
-/**
- * ゲームの設定情報を取得する
- *
- * 【設定情報について】
- *  - attemptLimits: 何回まで間違えられるか
- *  - keys: 入力可能なキーの一覧
- * @returns
- */
-export const getGameConfig = (): Promise<FindGameRuleResponse> =>
-  http.post<FindGameRuleResponse>("/gamePlay").then((res) => res.data);
+export const getGameSession = async (payload?: CreateSessionRequest) => {
+  let url = "/v1/session";
+  if (payload?.ruleId) {
+    url += `/${payload.ruleId}`;
+  }
+  return http.get<CreateRuleResponse>(url).then((res) => res.data);
+};
+
+export const postGuess = async (payload: ExecuteGuessRequest) =>
+  http.post<ExecuteGuessResponse>("/v1/guess", payload).then((res) => res.data);

@@ -2,9 +2,10 @@ import { css } from "@emotion/react";
 import { Flex } from "@mantine/core";
 import { useMemo } from "react";
 
+import { Header, Keyboard } from "../../components/elements";
+
 import { useNerdleGame } from "./Nerdle.hook";
 
-import { Header, Keyboard } from "@/components/elements";
 import { Button } from "@/components/elements/Button";
 import { GameLayout } from "@/components/layouts";
 
