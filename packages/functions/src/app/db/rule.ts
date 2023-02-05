@@ -1,7 +1,9 @@
 import { Database } from "./firestore";
 
-import type { Rule } from "../dto/rule/rule";
+import type { Rule } from "../dto/rule";
 
-class GameRuleDatabase extends Database<Rule> {}
-
-export const gameRuleDb = new GameRuleDatabase("gameRule");
+export class RuleDatabase extends Database<Rule> {
+  constructor() {
+    super("rule");
+  }
+}

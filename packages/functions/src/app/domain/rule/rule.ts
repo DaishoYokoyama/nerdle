@@ -1,4 +1,4 @@
-import type { KeyWithOutId, Key } from "./key";
+import type { KeyWithOutId, Key } from "../key";
 
 /***********************
  * 共通オブジェクト
@@ -22,9 +22,9 @@ export type Rule = {
  * REST入出力
  ***********************/
 
-export type FindRuleResponse = RuleSummary;
+export type FindRuleResponse = Rule;
 
-export type FindAllRuleResponse = RuleSummary[];
+export type FindAllRuleResponse = Rule[];
 
 export type CreateRuleRequest = {
   correctValue: string[];
