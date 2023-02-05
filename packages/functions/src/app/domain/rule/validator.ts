@@ -2,7 +2,7 @@ import { checkSchema } from "express-validator";
 
 import { evaluate } from "../../utils/evaluate";
 
-import type { KeyWithOutId } from "./key";
+import type { KeyWithOutId } from "../key";
 
 /**
  * correctValueに使用できる文字列の配列

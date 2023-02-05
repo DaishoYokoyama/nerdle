@@ -16,9 +16,9 @@ export class Database<T extends BaseObject> {
     this._collection = collection;
   }
 
-  async get(id: string): Promise<T> {
+  async get(id: string): Promise<T | undefined> {
     const doc = await this._db.collection(this._collection).doc(id).get();
-    return doc.data() as T;
+    return doc.data() as T | undefined;
   }
 
   async getAll(): Promise<T[]> {

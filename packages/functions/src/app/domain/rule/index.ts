@@ -1,2 +1,2 @@
-export * from "./gameRule";
+export * from "./rule";
 export * from "./validator";

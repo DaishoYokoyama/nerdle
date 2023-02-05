@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Functions",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run serve -w functions",
+      "outFiles": ["${workspaceRoot}/packages/functions/lib/**/*.js"]
+    }
+  ]
+}
