@@ -2,7 +2,7 @@ import { showNotification } from "@mantine/notifications";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { getGameSession, postGuess } from "../../../api/rest";
-import { save, load } from "../../../api/storage";
+import { save, load, remove } from "../../../api/storage";
 
 import type { Session, Box } from "../../../types";
 import type { AxiosError } from "axios";
@@ -159,31 +159,39 @@ export const useNerdleGame = () => {
   );
 
   const loadGameConfig = useCallback(async () => {
-    const prevSession = await load<Session>(sessionStorageKey);
-    if (prevSession) {
-      const selectedBox = prevSession.boxes.filter(
-        (box) => box.group === prevSession.attempt.toString()
-      )[0];
+    try {
+      setState((prev) => ({ ...prev, processing: true }));
+
+      const prevSession = await load<Session>(sessionStorageKey);
+      if (prevSession) {
+        const selectedBox = prevSession.boxes.filter(
+          (box) => box.group === prevSession.attempt.toString()
+        )[0];
+
+        setState((prev) => ({
+          ...prev,
+          selectedBoxId: selectedBox.id,
+          gameSession: prevSession,
+        }));
+        return true;
+      }
+
+      const gameSession = await getGameSession().catch(
+        (e: AxiosError<Error>) => {
+          showNotification({ message: e.response?.data.message, color: "red" });
+        }
+      );
+
+      if (!gameSession) return false;
 
       setState((prev) => ({
         ...prev,
-        selectedBoxId: selectedBox.id,
-        gameSession: prevSession,
+        selectedBoxId: gameSession.boxes[0].id,
+        gameSession,
       }));
-      return true;
+    } finally {
+      setState((prev) => ({ ...prev, processing: false }));
     }
-
-    const gameSession = await getGameSession().catch((e: AxiosError<Error>) => {
-      showNotification({ message: e.response?.data.message, color: "red" });
-    });
-
-    if (!gameSession) return false;
-
-    setState({
-      selectedBoxId: gameSession.boxes[0].id,
-      gameSession,
-    });
-
     return true;
   }, [setState]);
 
@@ -191,37 +199,52 @@ export const useNerdleGame = () => {
     if (!state.gameSession) return;
     if (state.gameSession.attempt >= state.gameSession.attemptLimits) return;
 
-    const { ruleId, boxes, attempt } = state.gameSession;
+    try {
+      setState((prev) => ({ ...prev, processing: true }));
+      const { ruleId, boxes, attempt } = state.gameSession;
 
-    const guess = boxes.filter((box) => box.group === String(attempt));
-    const guessResult = await postGuess({ ruleId, boxes: guess }).catch(
-      (e: AxiosError<string>) => {
-        showNotification({ message: e.response?.data, color: "red" });
-      }
-    );
+      const guess = boxes.filter((box) => box.group === String(attempt));
+      const guessResult = await postGuess({ ruleId, boxes: guess }).catch(
+        (e: AxiosError<string>) => {
+          showNotification({ message: e.response?.data, color: "red" });
+        }
+      );
 
-    if (!guessResult) return;
+      if (!guessResult) return;
 
-    const mergedBoxes = boxes.map((box) => {
-      const r = guessResult.boxes.find((x) => x.id === box.id);
-      return r ? r : box;
-    });
+      const mergedBoxes = boxes.map((box) => {
+        const r = guessResult.boxes.find((x) => x.id === box.id);
+        return r ? r : box;
+      });
 
-    setState((prev) => {
-      if (!prev.gameSession) return prev;
+      setState((prev) => {
+        if (!prev.gameSession) return prev;
 
-      return {
-        ...prev,
-        gameSession: {
-          ...prev.gameSession,
-          attempt: prev.gameSession.attempt + 1,
-          boxes: mergedBoxes,
-        },
-      };
-    });
+        return {
+          ...prev,
+          gameSession: {
+            ...prev.gameSession,
+            attempt: prev.gameSession.attempt + 1,
+            boxes: mergedBoxes,
+          },
+        };
+      });
+    } finally {
+      setState((prev) => ({ ...prev, processing: false }));
+    }
 
     selectToNextLine();
   }, [state.gameSession, setState, selectToNextLine]);
+
+  const restartGame = useCallback(async () => {
+    await remove(sessionStorageKey);
+    await loadGameConfig();
+
+    showNotification({
+      message: "新しくゲームを開始しました！",
+      color: "green",
+    });
+  }, [loadGameConfig]);
 
   useEffect(() => {
     if (state.gameSession) {
@@ -247,6 +270,7 @@ export const useNerdleGame = () => {
       setBoxValue,
       backspace,
       submitGuess,
+      restartGame,
     },
   };
 };

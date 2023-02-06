@@ -7,6 +7,7 @@ import {
   Keyboard,
   Button,
   LoadingOverlay,
+  Settings,
 } from "../../../components/elements";
 import { GameLayout } from "../../../components/layouts";
 
@@ -86,7 +87,12 @@ export const Nerdle = () => {
         </Flex>
       </GameLayout>
       <Drawer opened={displayConfig} onClose={() => setDisplayConfig(false)}>
-        <div>AAA</div>
+        <Settings
+          onRestart={() => {
+            actions.restartGame();
+            setDisplayConfig(false);
+          }}
+        />
       </Drawer>
     </>
   );
