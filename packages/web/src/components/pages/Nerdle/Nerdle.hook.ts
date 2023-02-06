@@ -5,8 +5,10 @@ import { getGameSession, postGuess } from "../../../api/rest";
 import type { Session, Box } from "../../../types";
 
 type NerdleGameState = {
+  processing?: boolean;
   selectedBoxId?: string;
   gameSession?: Session;
+  activated?: boolean;
 };
 
 export const useNerdleGame = () => {
@@ -190,7 +192,13 @@ export const useNerdleGame = () => {
   }, [state.gameSession, setState, selectToNextLine]);
 
   useEffect(() => {
-    loadGameConfig();
+    loadGameConfig()
+      .then(() => {
+        setState((prev) => ({ ...prev, activated: true }));
+      })
+      .catch(() => {
+        setState((prev) => ({ ...prev, activated: false }));
+      });
     // NOTE: 初回ロード時のみ実行するため、依存配列は空にする
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
