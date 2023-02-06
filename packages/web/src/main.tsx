@@ -10,7 +10,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <ModalsProvider>
-        <NotificationsProvider>
+        <NotificationsProvider position="top-right">
           <Nerdle />
         </NotificationsProvider>
       </ModalsProvider>

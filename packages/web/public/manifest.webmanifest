@@ -5,7 +5,7 @@
   "scope": "/",
   "start_url": "/",
   "name": "Nerdle Clone",
-  "short_name": "NC",
+  "short_name": "Nerdle_C",
   "description": "Nerdle clone application. It is assumed to work on Firebase.",
   "icons": [
     {

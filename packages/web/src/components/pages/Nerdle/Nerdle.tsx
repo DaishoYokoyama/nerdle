@@ -79,6 +79,7 @@ export const Nerdle = () => {
                 onDeleteClick={actions.backspace}
                 onLeftArrowClick={actions.selectToPrevBox}
                 onRightArrowClick={actions.selectToNextBox}
+                disabled={processing}
               />
             </Flex>
           );
