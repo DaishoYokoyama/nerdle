@@ -1,8 +1,13 @@
+import { showNotification } from "@mantine/notifications";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { getGameSession, postGuess } from "../../../api/rest";
+import { save, load, remove } from "../../../api/storage";
 
 import type { Session, Box } from "../../../types";
+import type { AxiosError } from "axios";
+
+const gameSessionKey = "nerdle-game-session";
 
 type NerdleGameState = {
   processing?: boolean;
@@ -10,6 +15,11 @@ type NerdleGameState = {
   gameSession?: Session;
   activated?: boolean;
 };
+
+/**
+ * Nerdle Game のロジックを管理するカスタムフック
+ * FIXME: ロジックが多すぎるので、機能カテゴリに応じて分割する
+ */
 
 export const useNerdleGame = () => {
   const [state, setState] = useState<NerdleGameState>({});
@@ -22,6 +32,9 @@ export const useNerdleGame = () => {
     [state.selectedBoxId, state.gameSession]
   );
 
+  /**
+   * 色を設定したキー
+   */
   const coloredKeys = useMemo(() => {
     if (!state.gameSession) return [];
 
@@ -40,11 +53,17 @@ export const useNerdleGame = () => {
     });
   }, [state.gameSession]);
 
+  /**
+   * 箱を選択する
+   */
   const selectBox = useCallback(
     (box: Box) => setState((prev) => ({ ...prev, selectedBoxId: box.id })),
     [setState]
   );
 
+  /**
+   * 次の箱を選択する(同じグループの箱のみ)
+   */
   const selectToNextBox = useCallback(() => {
     if (!selectedBox || !state.gameSession) return;
 
@@ -57,6 +76,9 @@ export const useNerdleGame = () => {
     }
   }, [selectedBox, state.gameSession, selectBox]);
 
+  /**
+   * 前の箱を選択する(同じグループの箱のみ)
+   */
   const selectToPrevBox = useCallback(() => {
     if (!selectedBox || !state.gameSession) return;
 
@@ -69,6 +91,9 @@ export const useNerdleGame = () => {
     }
   }, [selectedBox, state.gameSession, selectBox]);
 
+  /**
+   * 次の行の最初の箱を選択する
+   */
   const selectToNextLine = useCallback(() => {
     if (!selectBox || !state.gameSession) return;
     if (state.gameSession.attempt >= state.gameSession.attemptLimits) return;
@@ -86,6 +111,9 @@ export const useNerdleGame = () => {
     }));
   }, [state.gameSession, selectBox]);
 
+  /**
+   * 選択中の箱の値を削除する、選択中の箱が空で前の箱がある場合は前の箱の値を削除する
+   */
   const backspace = useCallback(() => {
     if (!selectedBox || !state.gameSession) return;
 
@@ -131,6 +159,9 @@ export const useNerdleGame = () => {
     selectToPrevBox();
   }, [selectedBox, state.gameSession, setState, selectToPrevBox]);
 
+  /**
+   * 選択中の箱に値をセットする
+   */
   const setBoxValue = useCallback(
     (value: string) => {
       if (!selectedBox) return;
@@ -153,55 +184,120 @@ export const useNerdleGame = () => {
     [setState, selectedBox, selectToNextBox]
   );
 
-  const loadGameConfig = useCallback(async () => {
-    const gameSession = await getGameSession();
+  /**
+   * ゲームセッションをロードする(indexedDB or API)
+   */
+  const loadGameSession = useCallback(async () => {
+    try {
+      setState((prev) => ({ ...prev, processing: true }));
 
-    setState({
-      selectedBoxId: gameSession.boxes[0].id,
-      gameSession,
-    });
+      const prevSession = await load<Session>(gameSessionKey);
+      if (prevSession) {
+        const selectedBox = prevSession.boxes.filter(
+          (box) => box.group === prevSession.attempt.toString()
+        )[0];
+
+        setState((prev) => ({
+          ...prev,
+          selectedBoxId: selectedBox.id,
+          gameSession: prevSession,
+        }));
+        return true;
+      }
+
+      const gameSession = await getGameSession().catch(
+        (e: AxiosError<Error>) => {
+          showNotification({ message: e.response?.data.message, color: "red" });
+        }
+      );
+
+      if (!gameSession) return false;
+
+      setState((prev) => ({
+        ...prev,
+        selectedBoxId: gameSession.boxes[0].id,
+        gameSession,
+      }));
+    } finally {
+      setState((prev) => ({ ...prev, processing: false }));
+    }
+    return true;
   }, [setState]);
 
+  /**
+   * 答えの送信
+   */
   const submitGuess = useCallback(async () => {
     if (!state.gameSession) return;
     if (state.gameSession.attempt >= state.gameSession.attemptLimits) return;
 
-    const { ruleId, boxes, attempt } = state.gameSession;
+    try {
+      setState((prev) => ({ ...prev, processing: true }));
+      const { ruleId, boxes, attempt } = state.gameSession;
 
-    const guess = boxes.filter((box) => box.group === String(attempt));
-    const guessResult = await postGuess({ ruleId, boxes: guess });
+      const guess = boxes.filter((box) => box.group === String(attempt));
+      const guessResult = await postGuess({ ruleId, boxes: guess }).catch(
+        (e: AxiosError<string>) => {
+          showNotification({ message: e.response?.data, color: "red" });
+        }
+      );
 
-    const mergedBoxes = boxes.map((box) => {
-      const r = guessResult.boxes.find((x) => x.id === box.id);
-      return r ? r : box;
-    });
+      if (!guessResult) return;
 
-    setState((prev) => {
-      if (!prev.gameSession) return prev;
-      return {
-        ...prev,
-        gameSession: {
-          ...prev.gameSession,
-          attempt: prev.gameSession.attempt + 1,
-          boxes: mergedBoxes,
-        },
-      };
-    });
+      const mergedBoxes = boxes.map((box) => {
+        const r = guessResult.boxes.find((x) => x.id === box.id);
+        return r ? r : box;
+      });
+
+      setState((prev) => {
+        if (!prev.gameSession) return prev;
+
+        return {
+          ...prev,
+          gameSession: {
+            ...prev.gameSession,
+            attempt: prev.gameSession.attempt + 1,
+            boxes: mergedBoxes,
+          },
+        };
+      });
+    } finally {
+      setState((prev) => ({ ...prev, processing: false }));
+    }
 
     selectToNextLine();
   }, [state.gameSession, setState, selectToNextLine]);
 
+  /**
+   * ゲームのやり直し
+   */
+  const restartGame = useCallback(async () => {
+    await remove(gameSessionKey);
+    await loadGameSession();
+
+    showNotification({
+      message: "新しくゲームを開始しました！",
+      color: "green",
+    });
+  }, [loadGameSession]);
+
+  /**
+   * ゲームセッションの保存
+   */
   useEffect(() => {
-    loadGameConfig()
-      .then(() => {
-        setState((prev) => ({ ...prev, activated: true }));
-      })
-      .catch(() => {
-        setState((prev) => ({ ...prev, activated: false }));
-      });
-    // NOTE: 初回ロード時のみ実行するため、依存配列は空にする
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (state.gameSession) {
+      save(gameSessionKey, state.gameSession);
+    }
+  }, [state.gameSession]);
+
+  /**
+   * ゲームセッションのロード初回ロード
+   */
+  useEffect(() => {
+    loadGameSession().then((activated) => {
+      setState((prev) => ({ ...prev, activated }));
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     ...state,
@@ -215,6 +311,7 @@ export const useNerdleGame = () => {
       setBoxValue,
       backspace,
       submitGuess,
+      restartGame,
     },
   };
 };

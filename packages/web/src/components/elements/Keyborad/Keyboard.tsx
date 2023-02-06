@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
 import { Flex } from "@mantine/core";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
 import { Button } from "../Button";
 
@@ -19,17 +20,21 @@ const buttonStyle = css`
 
 export interface KeypadProps extends DefaultProps {
   keys: Key[];
-  onClick?: (cell: Key) => void;
+  onKeyClick?: (cell: Key) => void;
   onDeleteClick?: () => void;
   onEnterClick?: () => void;
+  onLeftArrowClick?: () => void;
+  onRightArrowClick?: () => void;
 }
 
 export const Keyboard = ({
   className,
   keys,
-  onClick,
+  onKeyClick,
   onDeleteClick,
   onEnterClick,
+  onLeftArrowClick,
+  onRightArrowClick,
 }: KeypadProps) => {
   return (
     <Flex className={className} direction="column" gap={8}>
@@ -41,7 +46,7 @@ export const Keyboard = ({
               key={key.id}
               color={key.color}
               css={buttonStyle}
-              onClick={() => onClick?.(key)}
+              onClick={() => onKeyClick?.(key)}
             >
               {key.value}
             </Button>
@@ -55,7 +60,7 @@ export const Keyboard = ({
               key={key.id}
               color={key.color}
               css={buttonStyle}
-              onClick={() => onClick?.(key)}
+              onClick={() => onKeyClick?.(key)}
             >
               {key.value}
             </Button>
@@ -65,6 +70,22 @@ export const Keyboard = ({
         </Button>
         <Button css={buttonStyle} onClick={onEnterClick}>
           Enter
+        </Button>
+      </div>
+      <div
+        css={css([
+          buttonRowStyle,
+          css`
+            margin-top: 10px;
+            justify-content: space-between;
+          `,
+        ])}
+      >
+        <Button css={buttonStyle} onClick={onLeftArrowClick}>
+          <IconChevronLeft />
+        </Button>
+        <Button css={buttonStyle} onClick={onRightArrowClick}>
+          <IconChevronRight />
         </Button>
       </div>
     </Flex>

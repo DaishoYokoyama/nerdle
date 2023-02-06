@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --mode prod",
     "lint": "eslint --ext .ts,.tsx src"
   },
   "dependencies": {
@@ -12,10 +12,12 @@
     "@mantine/core": "^5.10.2",
     "@mantine/hooks": "^5.10.2",
     "@mantine/modals": "^5.10.2",
+    "@mantine/notifications": "^5.10.3",
     "@tabler/icons": "^2.1.2",
     "@tabler/icons-react": "^2.1.2",
     "axios": "^1.3.1",
     "framer-motion": "^9.0.1",
+    "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "nanoid": "^4.0.0",
     "react": "^18.2.0",

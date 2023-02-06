@@ -1,5 +1,6 @@
 import cloneDeep from "lodash.clonedeep";
 
+import { badRequestException, notFoundException } from "../utils/error";
 import { evaluate } from "../utils/evaluate";
 
 import { RuleService } from "./ruleService";
@@ -16,21 +17,22 @@ export class GuessService {
   /**
    * 推測結果の正解判定
    * @param ruleId
+   * @throws {ReferenceError | SyntaxError}
    * @param boxes
    */
   async executeGuess(ruleId: string, boxes: Box[]) {
     const rule = await this._ruleService.getRule(ruleId);
 
     if (!rule) {
-      throw new Error("ルールが見つかりません");
+      throw notFoundException("ルールが見つかりません");
     }
 
     if (rule.correctValue.length !== boxes.length) {
-      throw new Error("ボックスの数が正しくありません");
+      throw badRequestException("ボックスの数が正しくありません");
     }
 
     if (boxes.filter((box) => box.value === "=").length !== 1) {
-      throw new Error("イコールキーが1つではありません");
+      throw badRequestException("式が不正です");
     }
 
     const expression = boxes.map((box) => box.value).join("");
@@ -41,7 +43,7 @@ export class GuessService {
       const rightSideValue = evaluate(rightSideExpression);
       if (leftSideValue !== rightSideValue) throw Error();
     } catch {
-      throw new Error("不正な式です");
+      throw badRequestException("式が不正です");
     }
 
     /***************************************************
@@ -61,7 +63,7 @@ export class GuessService {
       const correct = rule.correctValue[i];
       const guess = results[i];
 
-      if (!guess.value) throw new Error("ボックスの値が不正です");
+      if (!guess.value) throw badRequestException("ボックスの値が不正です");
 
       if (guess.value === correct) {
         results[i].color = "green";

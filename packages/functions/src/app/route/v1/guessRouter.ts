@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { validateExecuteGuessRequest } from "../../domain";
 import { GuessService } from "../../service";
+import { HttpException } from "../../utils/error";
 
 import type { ExecuteGuessRequest, ExecuteGuessResponse } from "../../domain";
 import type { Request, Response } from "express";
@@ -28,13 +29,12 @@ guessRouter.post(
         isCorrect: result.every((box) => box.color === "green"),
       };
 
-      res.send(responseBody);
+      return res.send(responseBody);
     } catch (e) {
-      if (e instanceof Error) {
-        res.status(500).send({ error: e.message });
-      } else {
-        res.status(500).send(e);
+      if (e instanceof HttpException) {
+        return res.status(e.statusCode).send(e.message);
       }
+      return res.status(500).send(e);
     }
   }
 );

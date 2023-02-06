@@ -10,7 +10,3 @@ app.use(json());
 app.use(cors({ origin: true }));
 
 app.use("/v1", router);
-
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
