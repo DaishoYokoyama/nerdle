@@ -23,7 +23,7 @@ export default defineConfig({
         display: "standalone",
         scope: "/",
         start_url: "/",
-        short_name: "NC",
+        short_name: "Nerdle_C",
         description:
           "Nerdle clone application. It is assumed to work on Firebase.",
         name: "Nerdle Clone",
