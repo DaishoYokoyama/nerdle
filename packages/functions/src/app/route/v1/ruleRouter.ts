@@ -5,6 +5,7 @@ import {
   validateCreateGameRuleRequest,
 } from "../../domain";
 import { RuleService } from "../../service";
+import { HttpException } from "../../utils/error";
 
 import type {
   FindRuleResponse,
@@ -26,9 +27,12 @@ ruleRouter.get("/", async (req: Request, res: Response) => {
   try {
     const rules = await ruleService.getRules();
     const responseBody: FindAllRuleResponse = rules;
-    res.send(responseBody);
+    return res.send(responseBody);
   } catch (e) {
-    res.status(500).send(e);
+    if (e instanceof HttpException) {
+      return res.status(e.statusCode).send(e.message);
+    }
+    return res.status(500).send(e);
   }
 });
 
@@ -47,14 +51,16 @@ ruleRouter.get(
       const rule = await ruleService.getRule(req.params.id);
 
       if (!rule) {
-        res.status(404).send();
-        return;
+        return res.status(404).send();
       }
 
       const responseBody: FindRuleResponse = rule;
-      res.send(responseBody);
+      return res.send(responseBody);
     } catch (e) {
-      res.status(500).send(e);
+      if (e instanceof HttpException) {
+        return res.status(e.statusCode).send(e.message);
+      }
+      return res.status(500).send(e);
     }
   }
 );
@@ -82,9 +88,12 @@ ruleRouter.post(
 
       const responseBody: CreateRuleResponse = rule;
 
-      res.send(responseBody);
+      return res.send(responseBody);
     } catch (e) {
-      res.status(500).send(e);
+      if (e instanceof HttpException) {
+        return res.status(e.statusCode).send(e.message);
+      }
+      return res.status(500).send(e);
     }
   }
 );

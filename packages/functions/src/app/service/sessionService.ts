@@ -1,6 +1,7 @@
 import { v4 as uuid } from "uuid";
 
 import { RuleDatabase } from "../db/rule";
+import { notFoundException } from "../utils/error";
 
 import type { Session, Box, Rule } from "../domain";
 
@@ -28,7 +29,7 @@ export class SessionService {
     }
 
     if (!rule) {
-      throw new ReferenceError("指定されたルールIDが見つかりません");
+      throw notFoundException("指定されたルールIDが見つかりません");
     }
 
     const correctValue = rule.correctValue;

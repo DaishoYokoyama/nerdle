@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { validateCreateSessionRequest } from "../../domain";
 import { SessionService } from "../../service";
+import { HttpException } from "../../utils/error";
 
 import type { CreateSessionResponse } from "../../domain";
 import type { Request, Response } from "express";
@@ -24,13 +25,12 @@ sessionRouter.get(
     try {
       const session = await sessionService.createSession(ruleId);
       const responseBody: CreateSessionResponse = session;
-      res.send(responseBody);
+      return res.send(responseBody);
     } catch (e) {
-      if (e instanceof ReferenceError) {
-        res.status(400).send(e);
-      } else {
-        res.status(500).send(e);
+      if (e instanceof HttpException) {
+        return res.status(e.statusCode).send(e.message);
       }
+      return res.status(500).send(e);
     }
   }
 );
