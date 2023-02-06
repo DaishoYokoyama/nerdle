@@ -28,11 +28,7 @@ ruleRouter.get("/", async (req: Request, res: Response) => {
     const responseBody: FindAllRuleResponse = rules;
     res.send(responseBody);
   } catch (e) {
-    if (e instanceof Error) {
-      res.status(500).send({ error: e.message });
-    } else {
-      res.status(500).send(e);
-    }
+    res.status(500).send(e);
   }
 });
 
@@ -58,11 +54,7 @@ ruleRouter.get(
       const responseBody: FindRuleResponse = rule;
       res.send(responseBody);
     } catch (e) {
-      if (e instanceof Error) {
-        res.status(500).send({ error: e.message });
-      } else {
-        res.status(500).send(e);
-      }
+      res.status(500).send(e);
     }
   }
 );
@@ -92,11 +84,7 @@ ruleRouter.post(
 
       res.send(responseBody);
     } catch (e) {
-      if (e instanceof Error) {
-        res.status(500).send({ error: e.message });
-      } else {
-        res.status(500).send(e);
-      }
+      res.status(500).send(e);
     }
   }
 );

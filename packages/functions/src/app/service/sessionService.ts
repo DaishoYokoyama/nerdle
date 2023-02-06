@@ -14,7 +14,7 @@ export class SessionService {
   /**
    * ゲームセッションの作成
    * @param ruleId
-   * @throws {Error}
+   * @throws {ReferenceError}
    * @returns {Session}
    */
   async createSession(ruleId?: string): Promise<Session> {
@@ -28,7 +28,7 @@ export class SessionService {
     }
 
     if (!rule) {
-      throw new Error("Could not find the specified rule");
+      throw new ReferenceError("指定されたルールIDが見つかりません");
     }
 
     const correctValue = rule.correctValue;

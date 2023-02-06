@@ -26,8 +26,8 @@ sessionRouter.get(
       const responseBody: CreateSessionResponse = session;
       res.send(responseBody);
     } catch (e) {
-      if (e instanceof Error) {
-        res.status(500).send({ error: e.message });
+      if (e instanceof ReferenceError) {
+        res.status(400).send(e);
       } else {
         res.status(500).send(e);
       }
