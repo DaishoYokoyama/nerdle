@@ -16,6 +16,11 @@ type NerdleGameState = {
   activated?: boolean;
 };
 
+/**
+ * Nerdle Game のロジックを管理するカスタムフック
+ * FIXME: ロジックが多すぎるので、機能カテゴリに応じて分割する
+ */
+
 export const useNerdleGame = () => {
   const [state, setState] = useState<NerdleGameState>({});
 
@@ -27,6 +32,9 @@ export const useNerdleGame = () => {
     [state.selectedBoxId, state.gameSession]
   );
 
+  /**
+   * 色を設定したキー
+   */
   const coloredKeys = useMemo(() => {
     if (!state.gameSession) return [];
 
@@ -45,11 +53,17 @@ export const useNerdleGame = () => {
     });
   }, [state.gameSession]);
 
+  /**
+   * 箱を選択する
+   */
   const selectBox = useCallback(
     (box: Box) => setState((prev) => ({ ...prev, selectedBoxId: box.id })),
     [setState]
   );
 
+  /**
+   * 次の箱を選択する(同じグループの箱のみ)
+   */
   const selectToNextBox = useCallback(() => {
     if (!selectedBox || !state.gameSession) return;
 
@@ -62,6 +76,9 @@ export const useNerdleGame = () => {
     }
   }, [selectedBox, state.gameSession, selectBox]);
 
+  /**
+   * 前の箱を選択する(同じグループの箱のみ)
+   */
   const selectToPrevBox = useCallback(() => {
     if (!selectedBox || !state.gameSession) return;
 
@@ -74,6 +91,9 @@ export const useNerdleGame = () => {
     }
   }, [selectedBox, state.gameSession, selectBox]);
 
+  /**
+   * 次の行の最初の箱を選択する
+   */
   const selectToNextLine = useCallback(() => {
     if (!selectBox || !state.gameSession) return;
     if (state.gameSession.attempt >= state.gameSession.attemptLimits) return;
@@ -91,6 +111,9 @@ export const useNerdleGame = () => {
     }));
   }, [state.gameSession, selectBox]);
 
+  /**
+   * 選択中の箱の値を削除する、選択中の箱が空で前の箱がある場合は前の箱の値を削除する
+   */
   const backspace = useCallback(() => {
     if (!selectedBox || !state.gameSession) return;
 
@@ -136,6 +159,9 @@ export const useNerdleGame = () => {
     selectToPrevBox();
   }, [selectedBox, state.gameSession, setState, selectToPrevBox]);
 
+  /**
+   * 選択中の箱に値をセットする
+   */
   const setBoxValue = useCallback(
     (value: string) => {
       if (!selectedBox) return;
@@ -158,7 +184,10 @@ export const useNerdleGame = () => {
     [setState, selectedBox, selectToNextBox]
   );
 
-  const loadGameConfig = useCallback(async () => {
+  /**
+   * ゲームセッションをロードする(indexedDB or API)
+   */
+  const loadGameSession = useCallback(async () => {
     try {
       setState((prev) => ({ ...prev, processing: true }));
 
@@ -195,6 +224,9 @@ export const useNerdleGame = () => {
     return true;
   }, [setState]);
 
+  /**
+   * 答えの送信
+   */
   const submitGuess = useCallback(async () => {
     if (!state.gameSession) return;
     if (state.gameSession.attempt >= state.gameSession.attemptLimits) return;
@@ -236,24 +268,33 @@ export const useNerdleGame = () => {
     selectToNextLine();
   }, [state.gameSession, setState, selectToNextLine]);
 
+  /**
+   * ゲームのやり直し
+   */
   const restartGame = useCallback(async () => {
     await remove(sessionStorageKey);
-    await loadGameConfig();
+    await loadGameSession();
 
     showNotification({
       message: "新しくゲームを開始しました！",
       color: "green",
     });
-  }, [loadGameConfig]);
+  }, [loadGameSession]);
 
+  /**
+   * ゲームセッションの保存
+   */
   useEffect(() => {
     if (state.gameSession) {
       save(sessionStorageKey, state.gameSession);
     }
   }, [state.gameSession]);
 
+  /**
+   * ゲームセッションのロード初回ロード
+   */
   useEffect(() => {
-    loadGameConfig().then((activated) => {
+    loadGameSession().then((activated) => {
       setState((prev) => ({ ...prev, activated }));
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
