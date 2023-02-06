@@ -32,7 +32,7 @@ export class GuessService {
     }
 
     if (boxes.filter((box) => box.value === "=").length !== 1) {
-      throw badRequestException("イコールは1つのみ指定可能です");
+      throw badRequestException("式が不正です");
     }
 
     const expression = boxes.map((box) => box.value).join("");
@@ -43,7 +43,7 @@ export class GuessService {
       const rightSideValue = evaluate(rightSideExpression);
       if (leftSideValue !== rightSideValue) throw Error();
     } catch {
-      throw badRequestException("不正な式です");
+      throw badRequestException("式が不正です");
     }
 
     /***************************************************
