@@ -1,8 +1,10 @@
+import { showNotification } from "@mantine/notifications";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { getGameSession, postGuess } from "../../../api/rest";
 
 import type { Session, Box } from "../../../types";
+import type { AxiosError } from "axios";
 
 type NerdleGameState = {
   processing?: boolean;
@@ -154,12 +156,18 @@ export const useNerdleGame = () => {
   );
 
   const loadGameConfig = useCallback(async () => {
-    const gameSession = await getGameSession();
+    const gameSession = await getGameSession().catch((e: AxiosError<Error>) => {
+      showNotification({ message: e.response?.data.message, color: "red" });
+    });
+
+    if (!gameSession) return false;
 
     setState({
       selectedBoxId: gameSession.boxes[0].id,
       gameSession,
     });
+
+    return true;
   }, [setState]);
 
   const submitGuess = useCallback(async () => {
@@ -169,7 +177,13 @@ export const useNerdleGame = () => {
     const { ruleId, boxes, attempt } = state.gameSession;
 
     const guess = boxes.filter((box) => box.group === String(attempt));
-    const guessResult = await postGuess({ ruleId, boxes: guess });
+    const guessResult = await postGuess({ ruleId, boxes: guess }).catch(
+      (e: AxiosError<string>) => {
+        showNotification({ message: e.response?.data, color: "red" });
+      }
+    );
+
+    if (!guessResult) return;
 
     const mergedBoxes = boxes.map((box) => {
       const r = guessResult.boxes.find((x) => x.id === box.id);
@@ -192,13 +206,9 @@ export const useNerdleGame = () => {
   }, [state.gameSession, setState, selectToNextLine]);
 
   useEffect(() => {
-    loadGameConfig()
-      .then(() => {
-        setState((prev) => ({ ...prev, activated: true }));
-      })
-      .catch(() => {
-        setState((prev) => ({ ...prev, activated: false }));
-      });
+    loadGameConfig().then((activated) => {
+      setState((prev) => ({ ...prev, activated }));
+    });
     // NOTE: 初回ロード時のみ実行するため、依存配列は空にする
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
