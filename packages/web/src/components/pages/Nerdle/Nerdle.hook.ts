@@ -7,7 +7,7 @@ import { save, load, remove } from "../../../api/storage";
 import type { Session, Box } from "../../../types";
 import type { AxiosError } from "axios";
 
-const sessionStorageKey = "nerdle-game-session";
+const gameSessionKey = "nerdle-game-session";
 
 type NerdleGameState = {
   processing?: boolean;
@@ -191,7 +191,7 @@ export const useNerdleGame = () => {
     try {
       setState((prev) => ({ ...prev, processing: true }));
 
-      const prevSession = await load<Session>(sessionStorageKey);
+      const prevSession = await load<Session>(gameSessionKey);
       if (prevSession) {
         const selectedBox = prevSession.boxes.filter(
           (box) => box.group === prevSession.attempt.toString()
@@ -272,7 +272,7 @@ export const useNerdleGame = () => {
    * ゲームのやり直し
    */
   const restartGame = useCallback(async () => {
-    await remove(sessionStorageKey);
+    await remove(gameSessionKey);
     await loadGameSession();
 
     showNotification({
@@ -286,7 +286,7 @@ export const useNerdleGame = () => {
    */
   useEffect(() => {
     if (state.gameSession) {
-      save(sessionStorageKey, state.gameSession);
+      save(gameSessionKey, state.gameSession);
     }
   }, [state.gameSession]);
 

@@ -67,6 +67,9 @@ export const Settings = ({ onRestart }: SettingsProps) => {
           >
             次回ゲーム開始時から有効になります。
           </Text>
+          <Text color="red" size="xs" weight="bold">
+            ※ 現在この機能は利用できません
+          </Text>
         </section>
       </Flex>
     </div>
