@@ -159,12 +159,16 @@ export const useNerdleGame = () => {
   );
 
   const loadGameConfig = useCallback(async () => {
-    const prevData = await load<[string, Session]>(sessionStorageKey);
-    if (prevData) {
+    const prevSession = await load<Session>(sessionStorageKey);
+    if (prevSession) {
+      const selectedBox = prevSession.boxes.filter(
+        (box) => box.group === prevSession.attempt.toString()
+      )[0];
+
       setState((prev) => ({
         ...prev,
-        selectedBoxId: prevData[0],
-        gameSession: prevData[1],
+        selectedBoxId: selectedBox.id,
+        gameSession: prevSession,
       }));
       return true;
     }
@@ -205,6 +209,7 @@ export const useNerdleGame = () => {
 
     setState((prev) => {
       if (!prev.gameSession) return prev;
+
       return {
         ...prev,
         gameSession: {
@@ -219,16 +224,16 @@ export const useNerdleGame = () => {
   }, [state.gameSession, setState, selectToNextLine]);
 
   useEffect(() => {
+    if (state.gameSession) {
+      save(sessionStorageKey, state.gameSession);
+    }
+  }, [state.gameSession]);
+
+  useEffect(() => {
     loadGameConfig().then((activated) => {
       setState((prev) => ({ ...prev, activated }));
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (state.gameSession && state.selectedBoxId) {
-      save(sessionStorageKey, [state.selectedBoxId, state.gameSession]);
-    }
-  }, [state.gameSession, state.selectedBoxId]);
 
   return {
     ...state,
