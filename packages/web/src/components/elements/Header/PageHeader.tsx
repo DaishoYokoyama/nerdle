@@ -6,8 +6,10 @@ import {
   IconSettings,
   IconBrandGithub,
 } from "@tabler/icons-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import logoUrl from "../../../assets/logo.png";
+import { LoadingOverlay } from "../LoadingOverlay";
 
 import type { DefaultProps } from "../../../types";
 
@@ -21,9 +23,15 @@ const githubButtonStyle = css`
   right: 16px;
 `;
 
-export type HeaderProps = DefaultProps;
+const logoWrapperStyle = css`
+  position: relative;
+`;
 
-export const Header = ({ className }: HeaderProps) => {
+export type HeaderProps = DefaultProps & {
+  processing?: boolean;
+};
+
+export const Header = ({ className, processing: loading }: HeaderProps) => {
   const onGithubButtonClick = () =>
     openConfirmModal({
       title: "外部サイトに移動します、よろしいですか？",
@@ -40,7 +48,21 @@ export const Header = ({ className }: HeaderProps) => {
 
   return (
     <Flex className={className} gap={10} align="center" css={pageHeaderStyle}>
-      <Image width={32} src={logoUrl} radius="sm" />
+      <div css={logoWrapperStyle}>
+        <Image width={32} src={logoUrl} radius="sm" />
+        <AnimatePresence>
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              <LoadingOverlay />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* TODO: 遊び方を表示 */}
       <ActionIcon disabled>

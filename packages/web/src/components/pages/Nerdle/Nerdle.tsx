@@ -15,7 +15,8 @@ const contentStyle = css`
 `;
 
 export const Nerdle = () => {
-  const { selectedBox, coloredKeys, gameSession, actions } = useNerdleGame();
+  const { processing, selectedBox, coloredKeys, gameSession, actions } =
+    useNerdleGame();
 
   const boxWrapperStyle = useMemo(
     () => css`
@@ -27,7 +28,7 @@ export const Nerdle = () => {
   );
 
   return (
-    <GameLayout header={<Header />}>
+    <GameLayout header={<Header processing={processing} />}>
       <Flex css={contentStyle} gap={20} direction="column">
         <div css={boxWrapperStyle}>
           {gameSession?.boxes.map((box) => (
