@@ -1,4 +1,4 @@
-import type { Box } from "../box";
+import type { Box } from "./box";
 
 /***********************
  * REST入出力

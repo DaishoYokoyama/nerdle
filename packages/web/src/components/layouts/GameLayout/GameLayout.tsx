@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import type { DefaultProps } from "@/types";
+import type { DefaultProps } from "../../../types";
 import type { ReactNode } from "react";
 
 const mainLayoutStyle = css`

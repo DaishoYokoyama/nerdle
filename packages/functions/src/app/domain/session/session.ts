@@ -10,6 +10,7 @@ export type Session = {
   ruleId: string;
   attempt: number;
   attemptLimits: number;
+  correctValueLength: number;
   boxes: Box[];
   keys: Key[];
 };

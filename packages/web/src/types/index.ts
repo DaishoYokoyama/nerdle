@@ -1,4 +1,3 @@
 export * from "./defaultProps";
-export * from "./box";
-export * from "./gameRule";
-export * from "./key";
+
+export type { Box, Key, Session } from "../api/rest/domain";

@@ -1,4 +1,4 @@
-import type { KeyWithOutId, Key } from "../key";
+import type { KeyWithOutId, Key } from "./key";
 
 /***********************
  * 共通オブジェクト

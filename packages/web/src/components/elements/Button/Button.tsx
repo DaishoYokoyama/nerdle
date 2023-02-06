@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { Button as MantineButton } from "@mantine/core";
 
-import type { DefaultProps } from "@/types";
+import type { DefaultProps } from "../../../types";
 import type { DefaultMantineColor } from "@mantine/core";
 import type { ReactNode, MouseEventHandler } from "react";
 

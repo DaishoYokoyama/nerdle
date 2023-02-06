@@ -1,5 +1,5 @@
-import type { Box } from "../box";
-import type { Key } from "../key";
+import type { Box } from "./box";
+import type { Key } from "./key";
 
 /***********************
  * 共通オブジェクト
@@ -10,6 +10,7 @@ export type Session = {
   ruleId: string;
   attempt: number;
   attemptLimits: number;
+  correctValueLength: number;
   boxes: Box[];
   keys: Key[];
 };

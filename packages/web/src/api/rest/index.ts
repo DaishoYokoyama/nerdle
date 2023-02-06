@@ -2,7 +2,7 @@ import { http } from "./client";
 
 import type {
   CreateSessionRequest,
-  CreateRuleResponse,
+  CreateSessionResponse,
   ExecuteGuessRequest,
   ExecuteGuessResponse,
 } from "./domain";
@@ -12,7 +12,7 @@ export const getGameSession = async (payload?: CreateSessionRequest) => {
   if (payload?.ruleId) {
     url += `/${payload.ruleId}`;
   }
-  return http.get<CreateRuleResponse>(url).then((res) => res.data);
+  return http.get<CreateSessionResponse>(url).then((res) => res.data);
 };
 
 export const postGuess = async (payload: ExecuteGuessRequest) =>
