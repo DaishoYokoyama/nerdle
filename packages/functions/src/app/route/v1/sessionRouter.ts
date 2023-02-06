@@ -13,7 +13,6 @@ export const sessionRouter = Router();
  * POST /api/v1/session
  * ゲームセッションの作成
  * @returns {CreateSessionResponse}
- * @throws {Error}
  */
 sessionRouter.get(
   "/:ruleId?",

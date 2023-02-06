@@ -2,9 +2,12 @@ import { showNotification } from "@mantine/notifications";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { getGameSession, postGuess } from "../../../api/rest";
+import { save, load } from "../../../api/storage";
 
 import type { Session, Box } from "../../../types";
 import type { AxiosError } from "axios";
+
+const sessionStorageKey = "nerdle-game-session";
 
 type NerdleGameState = {
   processing?: boolean;
@@ -156,6 +159,16 @@ export const useNerdleGame = () => {
   );
 
   const loadGameConfig = useCallback(async () => {
+    const prevData = await load<[string, Session]>(sessionStorageKey);
+    if (prevData) {
+      setState((prev) => ({
+        ...prev,
+        selectedBoxId: prevData[0],
+        gameSession: prevData[1],
+      }));
+      return true;
+    }
+
     const gameSession = await getGameSession().catch((e: AxiosError<Error>) => {
       showNotification({ message: e.response?.data.message, color: "red" });
     });
@@ -209,9 +222,13 @@ export const useNerdleGame = () => {
     loadGameConfig().then((activated) => {
       setState((prev) => ({ ...prev, activated }));
     });
-    // NOTE: 初回ロード時のみ実行するため、依存配列は空にする
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (state.gameSession && state.selectedBoxId) {
+      save(sessionStorageKey, [state.selectedBoxId, state.gameSession]);
+    }
+  }, [state.gameSession, state.selectedBoxId]);
 
   return {
     ...state,
