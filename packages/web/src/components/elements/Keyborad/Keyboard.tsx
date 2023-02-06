@@ -3,7 +3,7 @@ import { Flex } from "@mantine/core";
 
 import { Button } from "../Button";
 
-import type { NumberKey, OperatorKey, Key, DefaultProps } from "@/types";
+import type { Key, DefaultProps } from "../../../types";
 
 const buttonRowStyle = css`
   height: 48px;
@@ -18,8 +18,7 @@ const buttonStyle = css`
 `;
 
 export interface KeypadProps extends DefaultProps {
-  numberKeys: NumberKey[];
-  operatorKeys: OperatorKey[];
+  keys: Key[];
   onClick?: (cell: Key) => void;
   onDeleteClick?: () => void;
   onEnterClick?: () => void;
@@ -27,8 +26,7 @@ export interface KeypadProps extends DefaultProps {
 
 export const Keyboard = ({
   className,
-  numberKeys,
-  operatorKeys,
+  keys,
   onClick,
   onDeleteClick,
   onEnterClick,
@@ -36,28 +34,32 @@ export const Keyboard = ({
   return (
     <Flex className={className} direction="column" gap={8}>
       <div className="number-row" css={buttonRowStyle}>
-        {numberKeys.map((key) => (
-          <Button
-            key={key.id}
-            color={key.color}
-            css={buttonStyle}
-            onClick={() => onClick?.(key)}
-          >
-            {key.value}
-          </Button>
-        ))}
+        {keys
+          .filter((key) => key.type === "number")
+          .map((key) => (
+            <Button
+              key={key.id}
+              color={key.color}
+              css={buttonStyle}
+              onClick={() => onClick?.(key)}
+            >
+              {key.value}
+            </Button>
+          ))}
       </div>
       <div className="operator-action-row" css={buttonRowStyle}>
-        {operatorKeys.map((key) => (
-          <Button
-            key={key.id}
-            color={key.color}
-            css={buttonStyle}
-            onClick={() => onClick?.(key)}
-          >
-            {key.value}
-          </Button>
-        ))}
+        {keys
+          .filter((key) => key.type === "operator")
+          .map((key) => (
+            <Button
+              key={key.id}
+              color={key.color}
+              css={buttonStyle}
+              onClick={() => onClick?.(key)}
+            >
+              {key.value}
+            </Button>
+          ))}
         <Button css={buttonStyle} onClick={onDeleteClick}>
           Delete
         </Button>

@@ -7,9 +7,9 @@ import {
   IconBrandGithub,
 } from "@tabler/icons-react";
 
-import type { DefaultProps } from "@/types";
+import logoUrl from "../../../assets/logo.png";
 
-import logoUrl from "@/assets/logo.png";
+import type { DefaultProps } from "../../../types";
 
 const pageHeaderStyle = css`
   padding: 16px;

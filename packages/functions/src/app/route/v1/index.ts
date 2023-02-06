@@ -6,6 +6,6 @@ import { sessionRouter } from "./sessionRouter";
 
 export const router = Router();
 
-router.use("/rule", ruleRouter);
+router.use("/rules", ruleRouter);
 router.use("/session", sessionRouter);
 router.use("/guess", guessRouter);

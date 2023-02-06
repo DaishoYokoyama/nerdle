@@ -45,6 +45,7 @@ export class SessionService {
       ruleId: rule.id,
       attempt: 1,
       attemptLimits: rule.attemptLimits,
+      correctValueLength: correctValue.length,
       boxes,
       keys: rule.keys,
     };

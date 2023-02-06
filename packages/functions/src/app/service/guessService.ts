@@ -49,36 +49,31 @@ export class GuessService {
      ***************************************************/
     const results = cloneDeep(boxes);
 
-    const correctValueClone = cloneDeep(rule.correctValue);
-    const removeValue = (value: string) =>
-      correctValueClone.splice(
-        correctValueClone.findIndex((x) => x === value),
-        1
-      );
+    const occurrences = rule.correctValue.reduce<Record<string, number>>(
+      (acc, cur) => {
+        acc[cur] = (acc[cur] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
 
-    // 正誤判定 & 色付け
     for (let i = 0; i < rule.correctValue.length; i++) {
       const correct = rule.correctValue[i];
       const guess = results[i];
 
-      // NOTE: 前処理のバリデーションで下記条件は除外されているが、Typescriptの型補完のためチェック
       if (!guess.value) throw new Error("ボックスの値が不正です");
 
       if (guess.value === correct) {
         results[i].color = "green";
-        removeValue(guess.value);
-        continue;
-      }
-
-      if (!rule.correctValue.includes(guess.value)) {
+      } else if (!rule.correctValue.join("").includes(guess.value)) {
         results[i].color = "dark";
-        continue;
-      }
-
-      if (correctValueClone.includes(guess.value)) {
-        results[i].color = "violet";
-        removeValue(guess.value);
-        continue;
+      } else {
+        if (occurrences[guess.value] > 0) {
+          results[i].color = "violet";
+          occurrences[guess.value]--;
+        } else {
+          results[i].color = "dark";
+        }
       }
     }
 

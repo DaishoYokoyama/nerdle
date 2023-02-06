@@ -13,9 +13,11 @@ module.exports = {
     "plugin:react/recommended",
     "prettier",
   ],
-  plugins: ["@typescript-eslint", "import", "react"],
+  plugins: ["@typescript-eslint", "import", "react", "react-hooks"],
   rules: {
     "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/consistent-type-assertions": [
       "error",
       { assertionStyle: "as", objectLiteralTypeAssertions: "never" },

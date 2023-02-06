@@ -1,5 +1,5 @@
-import type { Box } from "../box";
-import type { Key } from "../key";
+import type { Box } from "./box";
+import type { Key } from "./key";
 
 /***********************
  * 共通オブジェクト
