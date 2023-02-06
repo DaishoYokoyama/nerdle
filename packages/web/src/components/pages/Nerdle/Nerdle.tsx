@@ -51,40 +51,39 @@ export const Nerdle = () => {
           />
         }
       >
-        <Flex css={contentStyle} gap={20} direction="column">
-          {(() => {
-            if (activated === undefined) {
-              return <LoadingOverlay />;
-            } else if (activated === false) {
-              return <Text color="gray">読み込みに失敗しました</Text>;
-            }
-            return (
-              <>
-                <div css={boxWrapperStyle}>
-                  {gameSession?.boxes.map((box) => (
-                    <Button
-                      key={box.id}
-                      color={box.color}
-                      selected={box.id === selectedBox?.id}
-                      onClick={() => actions.selectBox(box)}
-                      readonly={box.group !== String(gameSession?.attempt)}
-                    >
-                      {box.value}
-                    </Button>
-                  ))}
-                </div>
-                <Keyboard
-                  keys={coloredKeys}
-                  onKeyClick={(e) => actions.setBoxValue(e.value)}
-                  onEnterClick={actions.submitGuess}
-                  onDeleteClick={actions.backspace}
-                  onLeftArrowClick={actions.selectToPrevBox}
-                  onRightArrowClick={actions.selectToNextBox}
-                />
-              </>
-            );
-          })()}
-        </Flex>
+        {(() => {
+          if (activated === undefined) {
+            return <LoadingOverlay />;
+          } else if (activated === false) {
+            return <Text color="gray">読み込みに失敗しました</Text>;
+          }
+          return (
+            <Flex css={contentStyle} gap={20} direction="column">
+              <div css={boxWrapperStyle}>
+                {gameSession?.boxes.map((box) => (
+                  <Button
+                    key={box.id}
+                    color={box.color}
+                    selected={box.id === selectedBox?.id}
+                    onClick={() => actions.selectBox(box)}
+                    readonly={box.group !== String(gameSession?.attempt)}
+                  >
+                    {box.value}
+                  </Button>
+                ))}
+              </div>
+              <Keyboard
+                keys={coloredKeys}
+                onKeyClick={(e) => actions.setBoxValue(e.value)}
+                onEnterClick={actions.submitGuess}
+                onDeleteClick={actions.backspace}
+                onLeftArrowClick={actions.selectToPrevBox}
+                onRightArrowClick={actions.selectToNextBox}
+                disabled={processing}
+              />
+            </Flex>
+          );
+        })()}
       </GameLayout>
       <Drawer opened={displayConfig} onClose={() => setDisplayConfig(false)}>
         <Settings

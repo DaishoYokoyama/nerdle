@@ -25,6 +25,7 @@ export interface KeypadProps extends DefaultProps {
   onEnterClick?: () => void;
   onLeftArrowClick?: () => void;
   onRightArrowClick?: () => void;
+  disabled?: boolean;
 }
 
 export const Keyboard = ({
@@ -35,6 +36,7 @@ export const Keyboard = ({
   onEnterClick,
   onLeftArrowClick,
   onRightArrowClick,
+  disabled,
 }: KeypadProps) => {
   return (
     <Flex className={className} direction="column" gap={8}>
@@ -47,6 +49,7 @@ export const Keyboard = ({
               color={key.color}
               css={buttonStyle}
               onClick={() => onKeyClick?.(key)}
+              disabled={disabled}
             >
               {key.value}
             </Button>
@@ -61,14 +64,15 @@ export const Keyboard = ({
               color={key.color}
               css={buttonStyle}
               onClick={() => onKeyClick?.(key)}
+              disabled={disabled}
             >
               {key.value}
             </Button>
           ))}
-        <Button css={buttonStyle} onClick={onDeleteClick}>
+        <Button css={buttonStyle} onClick={onDeleteClick} disabled={disabled}>
           Delete
         </Button>
-        <Button css={buttonStyle} onClick={onEnterClick}>
+        <Button css={buttonStyle} onClick={onEnterClick} disabled={disabled}>
           Enter
         </Button>
       </div>
@@ -81,10 +85,18 @@ export const Keyboard = ({
           `,
         ])}
       >
-        <Button css={buttonStyle} onClick={onLeftArrowClick}>
+        <Button
+          css={buttonStyle}
+          onClick={onLeftArrowClick}
+          disabled={disabled}
+        >
           <IconChevronLeft />
         </Button>
-        <Button css={buttonStyle} onClick={onRightArrowClick}>
+        <Button
+          css={buttonStyle}
+          onClick={onRightArrowClick}
+          disabled={disabled}
+        >
           <IconChevronRight />
         </Button>
       </div>

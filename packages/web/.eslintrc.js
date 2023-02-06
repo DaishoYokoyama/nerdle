@@ -4,7 +4,7 @@ module.exports = {
     project: ["./tsconfig.json"],
     tsconfigRootDir: __dirname,
   },
-  ignorePatterns: ["dist", "vite.config.ts"],
+  ignorePatterns: ["dist", "vite.config.ts", "serviceWorker.js"],
   rules: {
     "react/no-unknown-property": ["error", { ignore: ["css"] }],
   },

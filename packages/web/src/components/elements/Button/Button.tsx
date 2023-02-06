@@ -31,6 +31,7 @@ export interface ButtonProps extends DefaultProps {
   selected?: boolean;
   readonly?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
+  disabled?: boolean;
 }
 
 export const Button = ({
@@ -39,6 +40,7 @@ export const Button = ({
   color,
   selected,
   readonly,
+  disabled,
   onClick,
 }: ButtonProps) => {
   return (
@@ -49,6 +51,7 @@ export const Button = ({
       variant={color ? undefined : "default"}
       onClick={readonly ? undefined : onClick}
       radius="md"
+      disabled={disabled}
     >
       {children}
     </MantineButton>
