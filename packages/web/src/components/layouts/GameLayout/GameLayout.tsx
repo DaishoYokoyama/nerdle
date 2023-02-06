@@ -15,6 +15,10 @@ const headerStyle = css`
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 `;
 
+const mainStyle = css`
+  position: relative;
+`;
+
 export interface MainLayoutProps extends DefaultProps {
   children?: ReactNode;
   header?: ReactNode;
@@ -28,7 +32,7 @@ export const GameLayout = ({
   return (
     <div className={className} css={mainLayoutStyle}>
       <header css={headerStyle}>{header}</header>
-      <main>{children}</main>
+      <main css={mainStyle}>{children}</main>
     </div>
   );
 };

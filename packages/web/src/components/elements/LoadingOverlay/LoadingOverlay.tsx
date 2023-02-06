@@ -3,7 +3,7 @@ import { Loader } from "@mantine/core";
 
 const loadingOverlayStyle = css`
   position: absolute;
-  top: 0px;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
