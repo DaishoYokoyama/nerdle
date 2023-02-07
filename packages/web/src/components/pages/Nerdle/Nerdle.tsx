@@ -24,6 +24,7 @@ export const Nerdle = () => {
   const [displayConfig, setDisplayConfig] = useState(false);
 
   const {
+    gameResult,
     processing,
     selectedBox,
     coloredKeys,
@@ -79,7 +80,7 @@ export const Nerdle = () => {
                 onDeleteClick={actions.backspace}
                 onLeftArrowClick={actions.selectToPrevBox}
                 onRightArrowClick={actions.selectToNextBox}
-                disabled={processing}
+                disabled={processing || !!gameResult}
               />
             </Flex>
           );

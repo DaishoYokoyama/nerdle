@@ -1,8 +1,12 @@
+import { Text } from "@mantine/core";
+import { openModal, closeAllModals } from "@mantine/modals";
 import { showNotification } from "@mantine/notifications";
+import { uniq } from "lodash";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { getGameSession, postGuess } from "../../../api/rest";
 import { save, load, remove } from "../../../api/storage";
+import { GameClearNotice, GameOverNotice } from "../../elements";
 
 import type { Session, Box } from "../../../types";
 import type { AxiosError } from "axios";
@@ -10,10 +14,11 @@ import type { AxiosError } from "axios";
 const gameSessionKey = "nerdle-game-session";
 
 type NerdleGameState = {
+  gameResult?: "success" | "failure";
   processing?: boolean;
+  activated?: boolean;
   selectedBoxId?: string;
   gameSession?: Session;
-  activated?: boolean;
 };
 
 /**
@@ -189,7 +194,11 @@ export const useNerdleGame = () => {
    */
   const loadGameSession = useCallback(async () => {
     try {
-      setState((prev) => ({ ...prev, processing: true }));
+      setState((prev) => ({
+        ...prev,
+        processing: true,
+        gameResult: undefined,
+      }));
 
       const prevSession = await load<Session>(gameSessionKey);
       if (prevSession) {
@@ -199,7 +208,7 @@ export const useNerdleGame = () => {
 
         setState((prev) => ({
           ...prev,
-          selectedBoxId: selectedBox.id,
+          selectedBoxId: selectedBox?.id,
           gameSession: prevSession,
         }));
         return true;
@@ -225,11 +234,69 @@ export const useNerdleGame = () => {
   }, [setState]);
 
   /**
+   * ゲームのやり直し
+   */
+  const restartGame = useCallback(async () => {
+    await remove(gameSessionKey);
+    await loadGameSession();
+
+    showNotification({
+      message: "新しくゲームを開始しました！",
+      color: "green",
+    });
+  }, [loadGameSession]);
+
+  /**
+   * ゲームクリアモーダルを開く
+   */
+  const openGameClearModal = useCallback(
+    (attempt: number) => {
+      setState((prev) => ({ ...prev, gameResult: "success" }));
+      openModal({
+        title: (
+          <Text size="lg" weight="bold" color="green">
+            Congratulations!
+          </Text>
+        ),
+        children: (
+          <GameClearNotice
+            attempt={attempt}
+            onRestart={() => {
+              closeAllModals();
+              restartGame();
+            }}
+          />
+        ),
+      });
+    },
+    [restartGame]
+  );
+
+  const openGameOverModal = useCallback(() => {
+    setState((prev) => ({ ...prev, gameResult: "failure" }));
+    openModal({
+      title: (
+        <Text size="lg" weight="bold" color="red">
+          Game Over
+        </Text>
+      ),
+      children: (
+        <GameOverNotice
+          onRestart={() => {
+            closeAllModals();
+            restartGame();
+          }}
+        />
+      ),
+    });
+  }, [restartGame]);
+
+  /**
    * 答えの送信
    */
   const submitGuess = useCallback(async () => {
     if (!state.gameSession) return;
-    if (state.gameSession.attempt >= state.gameSession.attemptLimits) return;
+    if (state.gameSession.attempt > state.gameSession.attemptLimits) return;
 
     try {
       setState((prev) => ({ ...prev, processing: true }));
@@ -269,19 +336,6 @@ export const useNerdleGame = () => {
   }, [state.gameSession, setState, selectToNextLine]);
 
   /**
-   * ゲームのやり直し
-   */
-  const restartGame = useCallback(async () => {
-    await remove(gameSessionKey);
-    await loadGameSession();
-
-    showNotification({
-      message: "新しくゲームを開始しました！",
-      color: "green",
-    });
-  }, [loadGameSession]);
-
-  /**
    * ゲームセッションの保存
    */
   useEffect(() => {
@@ -298,6 +352,34 @@ export const useNerdleGame = () => {
       setState((prev) => ({ ...prev, activated }));
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /**
+   * ゲームクリア / ゲームオーバー判定
+   */
+  useEffect(() => {
+    if (!state.gameSession) return;
+
+    const groups = uniq(state.gameSession.boxes.map((box) => box.group));
+    const isGameClear = groups.some((group) => {
+      const boxes = state.gameSession?.boxes.filter(
+        (box) => box.group === group
+      );
+      return boxes?.every((box) => box.color === "green");
+    });
+
+    if (isGameClear) {
+      openGameClearModal(state.gameSession.attempt - 1);
+      return;
+    }
+
+    const isGameOver =
+      state.gameSession.attempt > state.gameSession.attemptLimits;
+
+    if (isGameOver) {
+      openGameOverModal();
+      return;
+    }
+  }, [state.gameSession, openGameClearModal, openGameOverModal]);
 
   return {
     ...state,
