@@ -6,7 +6,8 @@
   "author": "Daisho Yokoyama <daisyou117@gmail.com>",
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/web",
+      "packages/functions"
     ]
   },
   "scripts": {

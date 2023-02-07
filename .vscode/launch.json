@@ -11,7 +11,7 @@
       "name": "Debug Functions",
       "type": "node-terminal",
       "request": "launch",
-      "command": "npm run serve -w functions",
+      "command": "npm run dev -w functions",
       "outFiles": ["${workspaceRoot}/packages/functions/lib/**/*.js"]
     }
   ]
