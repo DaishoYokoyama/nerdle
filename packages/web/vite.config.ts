@@ -11,7 +11,6 @@ export default defineConfig({
     tsconfigPaths(),
     VitePWA({
       includeAssets: [
-        "offline.html",
         "favicon.svg",
         "favicon.ico",
         "robots.txt",

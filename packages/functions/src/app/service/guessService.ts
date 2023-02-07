@@ -67,15 +67,21 @@ export class GuessService {
 
       if (guess.value === correct) {
         results[i].color = "green";
+        occurrences[guess.value]--;
       } else if (!rule.correctValue.join("").includes(guess.value)) {
         results[i].color = "dark";
+      }
+    }
+
+    for (let i = 0; i < results.length; i++) {
+      const guess = results[i];
+      if (guess.color || !guess.value) continue;
+
+      if (occurrences[guess.value] > 0) {
+        results[i].color = "violet";
+        occurrences[guess.value]--;
       } else {
-        if (occurrences[guess.value] > 0) {
-          results[i].color = "violet";
-          occurrences[guess.value]--;
-        } else {
-          results[i].color = "dark";
-        }
+        results[i].color = "dark";
       }
     }
 
