@@ -2,6 +2,8 @@
 
 このリポジトリは[Nerdle](https://nerdlegame.com/)のクローンアプリを React/Express/Firebase で作成したリポジトリです。
 
+[実装戦略について](https://www.notion.so/Nerdle-Development-roadmap-c90e3bdb064c4f829d1f5276b35725c3)
+
 - [Nerdle](#nerdle)
   - [Demo Site](#demo-site)
   - [環境構築](#環境構築)
