@@ -26,6 +26,19 @@ export class Database<T extends BaseObject> {
     return snapshot.docs.map((doc) => doc.data() as T);
   }
 
+  async getLatest(): Promise<T | undefined> {
+    const snapshot = await this._db
+      .collection(this._collection)
+      .limit(1)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    if (snapshot.empty) {
+      return undefined;
+    }
+    return snapshot.docs[0].data() as T;
+  }
+
   async set(data: T): Promise<WriteResult> {
     const result = this._db.collection(this._collection).doc(data.id).set(data);
     return result;

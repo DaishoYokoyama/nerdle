@@ -24,8 +24,7 @@ export class SessionService {
     if (ruleId) {
       rule = await this._ruleDb.get(ruleId);
     } else {
-      const rules = await this._ruleDb.getAll();
-      rule = rules[0];
+      rule = await this._ruleDb.getLatest();
     }
 
     if (!rule) {

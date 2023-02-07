@@ -2,8 +2,8 @@ import { v4 as uuid } from "uuid";
 
 import { RuleDatabase } from "../db/rule";
 
-import type { Key, KeyWithOutId } from "../domain";
-import type { Rule } from "../dto";
+import type { KeyWithOutId } from "../domain";
+import type { Rule, Key } from "../dto";
 
 export class RuleService {
   private _ruleDb: RuleDatabase;
@@ -24,11 +24,18 @@ export class RuleService {
     attemptLimits: number,
     keys: KeyWithOutId[]
   ): Promise<Rule> {
+    const createdAt = new Date().toISOString();
+
     const rule: Rule = {
       id: uuid(),
       correctValue,
       attemptLimits,
-      keys: keys.map<Key>((key) => ({ id: uuid(), ...key })),
+      createdAt,
+      keys: keys.map<Key>((key) => ({
+        id: uuid(),
+        createdAt,
+        ...key,
+      })),
     };
 
     await this._ruleDb.set(rule);

@@ -157,6 +157,7 @@ npm run dev -w web
     - バックエンド: OpenAPI 形式の定義ファイルを公開する
     - フロントエンド: OpenAPI 定義から[HTTPClient を自動生成する](https://github.com/OpenAPITools/openapi-generator)
   - CI/CD
+  - 管理者用のツール作成
 - フロントエンド (packages/web)
   - Storybook / Jest の導入と単体試験
   - `Nerdle.hook.tsx` の分離とリファクタリング
@@ -165,5 +166,6 @@ npm run dev -w web
 - バックエンド (packages/functions)
   - DI Container の導入
   - バリデーション
+  - ID 発行サービスの作成
   - モデルの再設計
     - e.g) 式を入力する箱をバックエンド側で全て生成する必要はなく、無駄に通信量がかかっている
