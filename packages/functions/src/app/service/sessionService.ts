@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 
 import { RuleDatabase } from "../db/rule";
-import { notFoundException } from "../utils/error";
+import { notFoundException } from "../error";
 
 import type { Session, Box, Rule } from "../domain";
 

@@ -1,6 +1,6 @@
 import cloneDeep from "lodash.clonedeep";
 
-import { badRequestException, notFoundException } from "../utils/error";
+import { badRequestException, notFoundException } from "../error";
 import { evaluate } from "../utils/evaluate";
 
 import { RuleService } from "./ruleService";

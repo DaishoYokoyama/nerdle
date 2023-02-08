@@ -1,10 +1,12 @@
+import type { Color } from "../color";
+
 /***********************
- * 共通オブジェクト
+ * Data Transfer Object
  ***********************/
 
 export type Box = {
   id: string;
   value?: string;
   group: string;
-  color?: string;
+  color?: Color;
 };

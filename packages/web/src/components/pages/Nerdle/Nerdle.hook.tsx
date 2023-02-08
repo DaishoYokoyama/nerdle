@@ -8,7 +8,7 @@ import { getGameSession, postGuess } from "../../../api/rest";
 import { save, load, remove } from "../../../api/storage";
 import { GameClearNotice, GameOverNotice } from "../../elements";
 
-import type { Session, Box } from "../../../types";
+import type { Box, Key, Session } from "../../../api/rest/domain";
 import type { AxiosError } from "axios";
 
 const gameSessionKey = "nerdle-game-session";
@@ -40,7 +40,7 @@ export const useNerdleGame = () => {
   /**
    * 色を設定したキー
    */
-  const coloredKeys = useMemo(() => {
+  const coloredKeys = useMemo<Key[]>(() => {
     if (!state.gameSession) return [];
 
     const { keys, boxes } = state.gameSession;

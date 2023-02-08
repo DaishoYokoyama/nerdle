@@ -4,13 +4,13 @@ import {
   validateFindGameRuleRequest,
   validateCreateGameRuleRequest,
 } from "../../domain";
+import { HttpException } from "../../error";
 import { RuleService } from "../../service";
-import { HttpException } from "../../utils/error";
 
 import type {
   FindRuleResponse,
   FindAllRuleResponse,
-  CreateRuleRequest,
+  CreateRuleInput,
   CreateRuleResponse,
 } from "../../domain";
 import type { Request, Response } from "express";
@@ -77,7 +77,7 @@ ruleRouter.post(
   validateCreateGameRuleRequest,
   async (req: Request, res: Response) => {
     const ruleService = new RuleService();
-    const requestBody: CreateRuleRequest = req.body;
+    const requestBody: CreateRuleInput = req.body;
 
     try {
       const rule = await ruleService.addRule(

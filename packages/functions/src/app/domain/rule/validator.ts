@@ -2,7 +2,7 @@ import { checkSchema } from "express-validator";
 
 import { evaluate } from "../../utils/evaluate";
 
-import type { KeyWithOutId } from "../key";
+import type { CreateKeyInput } from "../key";
 
 /**
  * correctValueに使用できる文字列の配列
@@ -48,7 +48,7 @@ export const validateCreateGameRuleRequest = checkSchema({
     custom: {
       // FIXME: エラーの原因を詳細に伝える
       errorMessage: "validation error for keys",
-      options: (keys: KeyWithOutId[]) => {
+      options: (keys: CreateKeyInput[]) => {
         const equalKey = keys.filter((key) => key.value === "=");
         if (equalKey.length !== 1) return false;
 

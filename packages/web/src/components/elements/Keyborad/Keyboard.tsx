@@ -4,7 +4,8 @@ import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
 import { Button } from "../Button";
 
-import type { Key, DefaultProps } from "../../../types";
+import type { Key } from "../../../api/rest/domain";
+import type { DefaultProps } from "../../../types";
 
 const buttonRowStyle = css`
   height: 48px;

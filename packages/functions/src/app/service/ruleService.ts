@@ -2,8 +2,7 @@ import { v4 as uuid } from "uuid";
 
 import { RuleDatabase } from "../db/rule";
 
-import type { KeyWithOutId } from "../domain";
-import type { Rule, Key } from "../dto";
+import type { Rule, Key, CreateKeyInput } from "../domain";
 
 export class RuleService {
   private _ruleDb: RuleDatabase;
@@ -22,7 +21,7 @@ export class RuleService {
   async addRule(
     correctValue: string[],
     attemptLimits: number,
-    keys: KeyWithOutId[]
+    keys: CreateKeyInput[]
   ): Promise<Rule> {
     const createdAt = new Date().toISOString();
 

@@ -1,8 +1,8 @@
 import { Router } from "express";
 
 import { validateCreateSessionRequest } from "../../domain";
+import { HttpException } from "../../error";
 import { SessionService } from "../../service";
-import { HttpException } from "../../utils/error";
 
 import type { CreateSessionResponse } from "../../domain";
 import type { Request, Response } from "express";
