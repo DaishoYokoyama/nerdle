@@ -1,7 +1,7 @@
 import type { Box } from "../box";
 
 /***********************
- * REST入出力
+ * Data Transfer Object
  ***********************/
 
 export type ExecuteGuessRequest = {

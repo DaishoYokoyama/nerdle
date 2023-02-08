@@ -1,12 +1,18 @@
+import type { Color } from "../color";
+import type { DataAccessObject } from "../dao";
+
 /***********************
- * 共通オブジェクト
+ * Data Access Object
  ***********************/
 
-export type Key = {
-  id: string;
+export type Key = DataAccessObject & {
   value: string;
   type: "number" | "operator";
-  color?: string;
+  color?: Color;
 };
 
-export type KeyWithOutId = Omit<Key, "id">;
+/***********************
+ * Data Transfer Object
+ ***********************/
+
+export type CreateKeyInput = Omit<Key, "id" | "createdAt">;

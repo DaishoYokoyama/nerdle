@@ -1,18 +1,11 @@
-import type { KeyWithOutId, Key } from "../key";
+import type { DataAccessObject } from "../dao";
+import type { CreateKeyInput, Key } from "../key";
 
 /***********************
- * 共通オブジェクト
+ * DataAccessObject
  ***********************/
 
-export type RuleSummary = {
-  id: string;
-  correctValueLength: number;
-  attemptLimits: number;
-  keys: Key[];
-};
-
-export type Rule = {
-  id: string;
+export type Rule = DataAccessObject & {
   correctValue: string[];
   attemptLimits: number;
   keys: Key[];
@@ -26,10 +19,10 @@ export type FindRuleResponse = Rule;
 
 export type FindAllRuleResponse = Rule[];
 
-export type CreateRuleRequest = {
+export type CreateRuleInput = {
   correctValue: string[];
   attemptLimits: number;
-  keys: KeyWithOutId[];
+  keys: CreateKeyInput[];
 };
 
 export type CreateRuleResponse = Rule;

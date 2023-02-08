@@ -1,6 +1,6 @@
 import { Database } from "./firestore";
 
-import type { Rule } from "../dto/rule";
+import type { Rule } from "../domain";
 
 export class RuleDatabase extends Database<Rule> {
   constructor() {

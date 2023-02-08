@@ -1,13 +1,13 @@
 import admin from "firebase-admin";
 
-import type { BaseObject } from "../dto";
+import type { DataAccessObject } from "../domain";
 import type { Firestore, WriteResult } from "firebase-admin/firestore";
 
 admin.initializeApp();
 
 const db = admin.firestore();
 
-export class Database<T extends BaseObject> {
+export class Database<T extends DataAccessObject> {
   private _db: Firestore;
   private _collection: string;
 
