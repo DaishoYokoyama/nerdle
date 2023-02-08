@@ -1,8 +1,8 @@
 import { Router } from "express";
 
 import { validateExecuteGuessRequest } from "../../domain";
+import { HttpException } from "../../error";
 import { GuessService } from "../../service";
-import { HttpException } from "../../utils/error";
 
 import type { ExecuteGuessRequest, ExecuteGuessResponse } from "../../domain";
 import type { Request, Response } from "express";

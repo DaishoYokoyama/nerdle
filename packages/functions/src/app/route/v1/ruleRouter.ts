@@ -4,8 +4,8 @@ import {
   validateFindGameRuleRequest,
   validateCreateGameRuleRequest,
 } from "../../domain";
+import { HttpException } from "../../error";
 import { RuleService } from "../../service";
-import { HttpException } from "../../utils/error";
 
 import type {
   FindRuleResponse,

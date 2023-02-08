@@ -3,7 +3,7 @@ import { evaluate } from "./evaluate";
 /**
  * NOTE: 計算関数はmathjsを利用しているため、動作保証はmathjsに委ねる
  * https://mathjs.org/docs/expressions/parsing.html
- * (アプリ独自の挙動に関しては動作確認を行う)
+ * (アプリ独自の挙動に関しては自前で動作確認を行う必要がある)
  */
 
 describe("evaluate", () => {
